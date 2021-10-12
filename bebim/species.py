@@ -39,7 +39,7 @@ class OrbitalConstants:
 
 orbital_constants = {
     'H':  dict(pqn=1, B=RYDBERG, Q=0.5668),
-    'He': dict(pqn=1, B=24.587389011, U=3*RYDBERG, N=2, Q=0.8841),
+    'He': dict(pqn=1, B=24.587389011, U=39.51, N=2, Q=0.8841),
     'Li': dict(pqn=2, B=5.391714996),
     'Na': dict(pqn=3, B=5.13907696),
     'K':  dict(pqn=4, B=4.34066373),
