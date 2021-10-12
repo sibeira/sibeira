@@ -10,8 +10,21 @@ def plot_profiles(energy, cross_section, reference_energy, reference_cross_secti
     matplotlib.pyplot.show()
 
 
-def plot_profile(energy, cross_section):
+def plot_uddin_profile(energy, cross_section):
+    fig, ax = matplotlib.pyplot.subplots()
+    fig.set_size_inches(4, 4.3)
     matplotlib.pyplot.semilogx(energy, cross_section)
+    matplotlib.pyplot.ylim(0, 5)
+    matplotlib.pyplot.xlim(1, 1e4)
+    ax_img = fig.add_subplot(111, label="ax_img")
+    img = matplotlib.pyplot.imread("uddin2015.jpg")
+    crop_img = img[10:930, 100:960]
+    ax_img.set_zorder(999)
+    ax.set_zorder(1000)
+    ax.patch.set_alpha(0.1)
+    ax_img.imshow(crop_img, aspect='1', alpha=1)
+    ax_img.set_yticks([])
+    ax_img.set_xticks([])
     matplotlib.pyplot.show()
 
 
@@ -68,7 +81,7 @@ class TestCrossSection(unittest.TestCase):
         energy = numpy.logspace(0.75, 5, 50)
         c = CrossSection(energy, 'Li', 0, with_Q=False)
         cross_section = c.calculate() / 1e-20
-        plot_profile(energy, cross_section)
+        plot_uddin_profile(energy, cross_section)
 
 
 if __name__ == '__main__':
