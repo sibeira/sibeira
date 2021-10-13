@@ -1,31 +1,49 @@
 import numpy
 import unittest
-import matplotlib.pyplot
+from cross_section import CrossSection
+from read_reference import read_reference
 
 
 class TestCrossSection(unittest.TestCase):
+    def test_hydrogen_with_Q(self):
+        reference_energy, reference_cross_section = read_reference('H_with_Q')
+
+        energy = reference_energy
+        c = CrossSection(energy, 'H', 0)
+        cross_section = c.calculate() / 1e-20
+
+        numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=4,
+                                                err_msg='Cross section test for hydrogen')
 
     def test_hydrogen(self):
-        reference_energy, reference_cross_section = self.read_reference('H')
+        reference_energy, reference_cross_section = read_reference('H')
 
-        cross_section = reference_cross_section
         energy = reference_energy
+        c = CrossSection(energy, 'H', 0, with_Q=False)
+        cross_section = c.calculate() / 1e-20
 
-        numpy.testing.assert_equal(cross_section, reference_cross_section, 'Cross section test for hydrogen')
-        self.plot(energy, cross_section, reference_energy, reference_cross_section)
+        numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=4,
+                                                err_msg='Cross section test for hydrogen (Q=1)')
 
-    @staticmethod
-    def read_reference(species):
-        reference_data = numpy.loadtxt('reference_cross_section_' + species + '.dat')
-        energy = reference_data[:, 0]
-        cross_section = reference_data[:, 1]
-        return energy, cross_section
+    def test_helium_with_Q(self):
+        reference_energy, reference_cross_section = read_reference('He_with_Q')
 
-    @staticmethod
-    def plot(energy, cross_section, reference_energy, reference_cross_section):
-        matplotlib.pyplot.semilogx(energy, cross_section, '.')
-        matplotlib.pyplot.semilogx(reference_energy, reference_cross_section)
-        matplotlib.pyplot.show()
+        energy = reference_energy
+        c = CrossSection(energy, 'He', 0)
+        cross_section = c.calculate() / 1e-20
+
+        numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=3,
+                                                err_msg='Cross section test for helium')
+
+    def test_helium(self):
+        reference_energy, reference_cross_section = read_reference('He')
+
+        an_energy = reference_energy
+        c = CrossSection(an_energy, 'He', 0, with_Q=False)
+        cross_section = c.calculate() / 1e-20
+
+        numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=3,
+                                                err_msg='Cross section test for helium (Q=1)')
 
 
 if __name__ == '__main__':
