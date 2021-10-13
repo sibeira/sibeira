@@ -4,11 +4,14 @@ from cross_section import CrossSection
 from read_reference import read_reference
 
 
-def plot_profiles(energy, cross_section, reference_energy, reference_cross_section,
+def plot_profiles(y_unit, energy, cross_section, reference_energy, reference_cross_section,
                   reference_relative_error=0):
     matplotlib.pyplot.semilogx(energy, cross_section, '.')
     matplotlib.pyplot.errorbar(reference_energy, reference_cross_section,
                                yerr=reference_cross_section * reference_relative_error)
+    y_exponent = str(int(numpy.log10(y_unit) + 4))
+    matplotlib.pyplot.xlabel('T [keV]')
+    matplotlib.pyplot.ylabel(r'$\sigma$ [$10^{' + y_exponent + '}$ cm$^2$]')
     matplotlib.pyplot.show()
 
 
@@ -18,6 +21,9 @@ def plot_uddin_profile(energy, cross_section):
     matplotlib.pyplot.semilogx(energy, cross_section)
     matplotlib.pyplot.ylim(0, 5)
     matplotlib.pyplot.xlim(1, 1e4)
+    matplotlib.pyplot.xlabel('T [keV]')
+    matplotlib.pyplot.ylabel(r'$\sigma_{Li\rightarrow Li^+}$ [$10^{-16}$ cm$^2$]')
+    ax.xaxis.set_label_coords(0.5, -0.09)
     ax_img = fig.add_subplot(111, label="ax_img")
     img = matplotlib.pyplot.imread("uddin2015.jpg")
     crop_img = img[10:930, 100:960]
@@ -51,14 +57,25 @@ def plot_wareing_profile(normalised_energy, cross_section):
     matplotlib.pyplot.show()
 
 
-def test_plot_lithium():
+def show_hydrogen_primary_ionisation():
+    reference_energy, reference_cross_section = read_reference('H')
+    energy = reference_energy
+    c = CrossSection(energy, 'H', 0, with_Q=False)
+    y_unit = 1e-20
+    cross_section = c.calculate() / y_unit
+    plot_profiles(y_unit, energy, cross_section, reference_energy, reference_cross_section)
+
+
+# MA Uddin et al., Phys. Rev. A 72, 032715, 2015
+def show_lithium_primary_ionisation():
     energy = numpy.logspace(0.75, 5, 50)
     c = CrossSection(energy, 'Li', 0, with_Q=False)
     cross_section = c.calculate() / 1e-20
     plot_uddin_profile(energy, cross_section)
 
 
-def test_plot_lithium_secondary_ionisation():
+# JB Wareing et al., Proc. Phys. Soc. 91 887, 1967
+def show_lithium_secondary_ionisation():
     energy = numpy.linspace(75, 1000, 50)
     c = CrossSection(energy, 'Li', 1, with_Q=False)
     cross_section = c.calculate() / 1e-22
@@ -67,15 +84,17 @@ def test_plot_lithium_secondary_ionisation():
 
 
 # B Peart et al., Journ. Phys. B 2(12), 1969
-def test_lithium_secondary_ionisation():
+def show_lithium_secondary_ionisation_high_energies():
     energy = numpy.logspace(3.5, 4.5, 50)
     c = CrossSection(energy, 'Li', 1, with_Q=False)
-    cross_section = c.calculate() / 1e-22
+    y_unit = 1e-22
+    cross_section = c.calculate() / y_unit
     reference_energy, reference_cross_section, reference_relative_error = read_reference('Li2')
-    plot_profiles(energy, cross_section, reference_energy, reference_cross_section, reference_relative_error)
+    plot_profiles(y_unit, energy, cross_section, reference_energy, reference_cross_section, reference_relative_error)
 
 
 if __name__ == '__main__':
-    test_plot_lithium()
-    test_plot_lithium_secondary_ionisation()
-    test_lithium_secondary_ionisation()
+    show_hydrogen_primary_ionisation()
+    show_lithium_primary_ionisation()
+    show_lithium_secondary_ionisation()
+    show_lithium_secondary_ionisation_high_energies()
