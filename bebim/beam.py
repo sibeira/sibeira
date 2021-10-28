@@ -1,5 +1,6 @@
 import numpy
 import scipy.constants
+import scipy.integrate
 from cross_section import CrossSection
 
 
@@ -36,9 +37,14 @@ class Beam:
             raise ValueError('Energy cannot be a negative value! (' + str(self.beam_energy) + ')')
         return numpy.sqrt(2.0 * self.beam_energy * scipy.constants.elementary_charge / self.mass)
 
-    def integrate_by_speed(self, cross_section):
-        return cross_section * self.speed
+    def integrand_electron_impact(self, speed, angle1, angle2):
+        c = CrossSection(self.beam_energy, self.species, self.ionisation_level)
+        v = speed * numpy.cos(angle1) * numpy.cos(angle2) - self.speed
+        m_per_2kT = self.mass / 2.0 / self.electron_temperature / scipy.constants.elementary_charge
+        return numpy.power(m_per_2kT / numpy.pi, 1.5) * numpy.exp(- m_per_2kT * v * v) * v * v * c.calculate()
+
+    def get_electron_impact_rate_coefficient(self):
+        return scipy.integrate.tplquad(self.integrand_electron_impact, -numpy.pi, numpy.pi, 0, numpy.pi, 0, numpy.inf)
 
     def get_attenuation(self):
-        c = CrossSection(self.beam_energy, self.species, self.ionisation_level)
-        return self.integrate_by_speed(cross_section=c.calculate()) * self.electron_density
+        return self.get_electron_impact_rate_coefficient() * self.electron_density
