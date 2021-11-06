@@ -3,6 +3,7 @@ import scipy.constants
 import scipy.integrate
 import scipy.stats
 from cross_section import CrossSection
+from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
 
 class Beam:
@@ -18,6 +19,8 @@ class Beam:
 
         self.beb = CrossSection(1000, self.species, self.ionisation_level)
         self.beb.set_polynomial()
+        self.tabata = CXCrossSection(1000, self.species)
+        self.tabata.set_polynomial()
 
     def set_profiles(self, electron_temperature=numpy.nan, electron_density=numpy.nan):
         if ~numpy.isnan(electron_temperature):
@@ -48,20 +51,20 @@ class Beam:
             raise ValueError('Energy cannot be a negative value! (' + str(self.beam_energy) + ')')
         return numpy.sqrt(2.0 * self.beam_energy * scipy.constants.elementary_charge / self.mass)
 
-######################
+    ######################
 
     def integrand_1d_coefficient(self, v):
         velocity = v * self.velocity_normalisation_factor
         kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
-        return scipy.stats.maxwell.pdf(v) * velocity * self.beb.f(kinetic_energy)
+        return scipy.stats.maxwell.pdf(v) * velocity * (self.beb.f(kinetic_energy) + self.tabata.f(kinetic_energy))
 
     def get_1d_coefficient(self):
         self.velocity_normalisation_factor = numpy.sqrt(
             self.electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
 
         c = 2 * numpy.pi * numpy.pi
-        c=self.get_1d_normalisation()
-        return c*scipy.integrate.quad(self.integrand_1d_coefficient, 0, numpy.inf)[0]
+        c = self.get_1d_normalisation()
+        return c * scipy.integrate.quad(self.integrand_1d_coefficient, 0, numpy.inf)[0]
 
     @staticmethod
     def integrand_1d_normalisation(v):
@@ -73,7 +76,6 @@ class Beam:
         except AttributeError:
             self.value_1d_normalisation = \
                 scipy.integrate.quad(self.integrand_1d_normalisation, 0, numpy.inf)[0]
-            print(self.value_1d_normalisation)
             return self.value_1d_normalisation
 
     def get_attenuation(self):
@@ -82,7 +84,7 @@ class Beam:
         rate_coefficient = self.get_1d_coefficient()
         return rate_coefficient * self.electron_density
 
-######################
+    ######################
 
     @staticmethod
     def get_third_side_length(a, b, alpha, beta):
@@ -90,8 +92,8 @@ class Beam:
 
     def integrand_3d_coefficient(self, beta, alpha, v):
         velocity = self.get_third_side_length(v * self.velocity_normalisation_factor, self.speed, alpha, beta)
-        kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity**2 / scipy.constants.elementary_charge
-        return scipy.stats.maxwell.pdf(v) * velocity * self.beb.f(kinetic_energy)
+        kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
+        return scipy.stats.maxwell.pdf(v) * velocity * (self.beb.f(kinetic_energy) + self.tabata.f(kinetic_energy))
 
     @staticmethod
     def integrand_3d_normalisation(beta, alpha, v):
@@ -110,7 +112,7 @@ class Beam:
         self.velocity_normalisation_factor = numpy.sqrt(
             self.electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
         return scipy.integrate.tplquad \
-                   (self.integrand_3d_coefficient, 0, numpy.inf, -numpy.pi, numpy.pi, -numpy.pi / 2, numpy.pi / 2)[0] / \
+               (self.integrand_3d_coefficient, 0, numpy.inf, -numpy.pi, numpy.pi, -numpy.pi / 2, numpy.pi / 2)[0] / \
                self.get_3d_normalisation()
 
     def get_attenuation_3d(self):
