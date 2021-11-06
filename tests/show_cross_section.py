@@ -16,16 +16,20 @@ def plot_profiles(y_unit, energy, cross_section, reference_energy, reference_cro
 
 
 def plot_uddin_profile(energy, cross_section):
+    energy_beli, cross_section_beli = read_reference('Li_Beli')
+    energy_lotz, cross_section_lotz = read_reference('Li_Lotz')
     fig, ax = matplotlib.pyplot.subplots()
     fig.set_size_inches(4, 4.3)
     matplotlib.pyplot.semilogx(energy, cross_section)
+    matplotlib.pyplot.semilogx(energy_beli, cross_section_beli*1e16)
+    matplotlib.pyplot.semilogx(energy_lotz, cross_section_lotz*1e16)
     matplotlib.pyplot.ylim(0, 5)
     matplotlib.pyplot.xlim(1, 1e4)
     matplotlib.pyplot.xlabel('T [keV]')
     matplotlib.pyplot.ylabel(r'$\sigma_{Li\rightarrow Li^+}$ [$10^{-16}$ cm$^2$]')
     ax.xaxis.set_label_coords(0.5, -0.09)
-    ax_img = fig.add_subplot(111, label="ax_img")
-    img = matplotlib.pyplot.imread("uddin2015.jpg")
+    ax_img = fig.add_subplot(111, label='ax_img')
+    img = matplotlib.pyplot.imread('uddin2015.jpg')
     crop_img = img[10:930, 100:960]
     ax_img.set_zorder(999)
     ax.set_zorder(1000)
@@ -37,16 +41,18 @@ def plot_uddin_profile(energy, cross_section):
 
 
 def plot_wareing_profile(normalised_energy, cross_section):
+    energy_beli, cross_section_beli = read_reference('Li2_Beli')
     fig, ax = matplotlib.pyplot.subplots()
     fig.set_size_inches(5, 2.25)
     matplotlib.pyplot.plot(normalised_energy, cross_section)
+    matplotlib.pyplot.plot(energy_beli/75.6400970, cross_section_beli*1e18)
     matplotlib.pyplot.ylim(0, 5)
     matplotlib.pyplot.xlim(0, 14)
     matplotlib.pyplot.xlabel('t')
     matplotlib.pyplot.ylabel(r'$\sigma_{Li^+\rightarrow Li^{2+}}$ [$10^{-18}$ cm$^2$]')
     ax.xaxis.set_label_coords(1.08, -0.05)
-    ax_img = fig.add_subplot(111, label="ax_img")
-    img = matplotlib.pyplot.imread("wareing1967.jpg")
+    ax_img = fig.add_subplot(111, label='ax_img')
+    img = matplotlib.pyplot.imread('wareing1967.jpg')
     crop_img = img[32:465, 130:1100]
     ax_img.set_zorder(999)
     ax.set_zorder(1000)
