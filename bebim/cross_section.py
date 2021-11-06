@@ -1,4 +1,5 @@
 import numpy
+import scipy.interpolate
 from species import *
 
 
@@ -24,6 +25,7 @@ class CrossSection:
         self.t = self.get_t()
         self.u = self.get_u()
         self.S = self.get_S()
+        self.f = lambda: None
 
     def get_t(self):
         return self.energy/self.B
@@ -41,3 +43,11 @@ class CrossSection:
             self.Q * ln_t / 2.0 * (1.0 - self.t**(-2)) +
             (2.0 - self.Q) * (1.0 - 1.0/self.t - (ln_t / (self.t + 1.0)))
         )
+
+    def set_polynomial(self):
+        energy = numpy.logspace(0.75, 5, 50)
+        self.energy = energy
+        self.t = self.get_t()
+        cross_section = self.calculate()
+        self.f = scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
+
