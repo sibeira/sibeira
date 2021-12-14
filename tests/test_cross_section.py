@@ -1,7 +1,7 @@
 import numpy
 import unittest
-from cross_section import CrossSection
-from read_reference import read_reference
+from bebim.cross_section import CrossSection
+from tests.read_reference import read_reference
 
 
 class TestCrossSection(unittest.TestCase):
