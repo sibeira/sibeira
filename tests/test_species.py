@@ -14,7 +14,7 @@ class TestSpecies(unittest.TestCase):
     def test_helium(self):
         o = OrbitalConstants('He')
         self.assertEqual(24.587389011, o.get('B'), 'B for helium')
-        self.assertEqual(3*RYDBERG, o.get('U'), 'U for helium')
+        self.assertEqual(39.51, o.get('U'), 'U for helium')
         self.assertEqual(2, o.get('N'), 'N for helium')
         self.assertEqual(0.8841, o.get('Q'), 'Q for helium')
         self.assertEqual(1, o.get('n'), 'n for helium')
