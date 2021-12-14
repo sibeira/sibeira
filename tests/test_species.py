@@ -25,7 +25,7 @@ class TestSpecies(unittest.TestCase):
         self.assertEqual(3.89390572743, o.get('U'), 'U for caesium')
         self.assertEqual(1, o.get('N'), 'N for caesium')
         self.assertEqual(1, o.get('Q'), 'Q for caesium')
-        self.assertEqual(1, o.get('n'), 'n for caesium')
+        self.assertEqual(6, o.get('n'), 'n for caesium')
 
     def test_lithium_ion(self):
         o = IonOrbitalConstants('Li')
