@@ -1,6 +1,6 @@
 import numpy
 import scipy.interpolate
-from species import *
+from bebim.species import *
 
 
 class CrossSection:
