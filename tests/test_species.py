@@ -19,6 +19,14 @@ class TestSpecies(unittest.TestCase):
         self.assertEqual(0.8841, o.get('Q'), 'Q for helium')
         self.assertEqual(1, o.get('n'), 'n for helium')
 
+    def test_sodium(self):
+        o = OrbitalConstants('Na')
+        self.assertEqual(5.13907696, o.get('B'), 'B for sodium')
+        self.assertEqual(5.13907696, o.get('U'), 'U for sodium')
+        self.assertEqual(1, o.get('N'), 'N for sodium')
+        self.assertEqual(1, o.get('Q'), 'Q for sodium')
+        self.assertEqual(3, o.get('n'), 'n for sodium')
+
     def test_caesium(self):
         o = OrbitalConstants('Cs')
         self.assertEqual(3.89390572743, o.get('B'), 'B for caesium')
