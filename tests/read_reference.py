@@ -2,7 +2,7 @@ import numpy
 
 
 def read_reference(species):
-    reference_data = numpy.loadtxt('reference_cross_section_' + species + '.dat')
+    reference_data = numpy.loadtxt('tests/reference_cross_section_' + species + '.dat')
     energy = reference_data[:, 0]
     cross_section = reference_data[:, 1]
     try:

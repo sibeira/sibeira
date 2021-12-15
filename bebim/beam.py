@@ -2,7 +2,7 @@ import numpy
 import scipy.constants
 import scipy.integrate
 import scipy.stats
-from cross_section import CrossSection
+from bebim.cross_section import CrossSection
 from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
 
@@ -58,24 +58,12 @@ class Beam:
         kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
         return scipy.stats.maxwell.pdf(v) * velocity * (self.beb.f(kinetic_energy) + self.tabata.f(kinetic_energy))
 
-    def integrand_1d_coefficient_tabata(self, v):
-        velocity = v * self.velocity_normalisation_factor
-        kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
-        return scipy.stats.maxwell.pdf(v) * velocity * self.tabata.f(kinetic_energy)
-
     def get_1d_coefficient(self):
         self.velocity_normalisation_factor = numpy.sqrt(
             self.electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
 
         c = self.get_1d_normalisation()
         return c * scipy.integrate.quad(self.integrand_1d_coefficient, 0, numpy.inf)[0]
-
-    def get_1d_coefficient_tabata(self):
-        self.velocity_normalisation_factor = numpy.sqrt(
-            self.electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
-
-        c = self.get_1d_normalisation()
-        return c * scipy.integrate.quad(self.integrand_1d_coefficient_tabata, 0, numpy.inf)[0]
 
     @staticmethod
     def integrand_1d_normalisation(v):
@@ -136,6 +124,4 @@ class Beam:
         c = CrossSection(self.electron_temperature, self.species, self.ionisation_level)
         t = c.get_t()
         r = 1e-11 * numpy.sqrt(t) / c.B ** 1.5 / (6.0 + t) * numpy.exp(-1.0 / t)
-        if is_with_tabata:
-            r += self.get_1d_coefficient_tabata()
         return r * self.electron_density
