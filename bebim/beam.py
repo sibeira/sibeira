@@ -2,8 +2,6 @@ import numpy
 import scipy.constants
 import scipy.integrate
 import scipy.stats
-from bebim.cross_section import CrossSection
-from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
 
 class Beam:
