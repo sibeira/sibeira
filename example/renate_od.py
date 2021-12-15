@@ -82,13 +82,13 @@ def export_beamlet_profile(shot_number='17178', time='1097', species='Li', energ
         rate.set_profiles(electron_temperature=temperatures[i], electron_density=densities[i])
         if i == 0:
             relative_attenuation_1d[i] = 1.0 - rate.get_attenuation_beb() * timestep
-            relative_attenuation_nrl[i] = 1.0 - rate.get_attenuation_nrl(is_with_tabata=False) * timestep
-            relative_attenuation_3d[i] = 1.0 - rate.get_attenuation_beb_tabata_3d() * timestep
+            relative_attenuation_nrl[i] = 1.0 - rate.get_attenuation_nrl() * timestep
+            relative_attenuation_3d[i] = 1.0 - rate.get_attenuation_beb(True, 3) * timestep
         else:
             relative_attenuation_1d[i] = (1.0 - rate.get_attenuation_beb() * timestep) * relative_attenuation_1d[i - 1]
-            relative_attenuation_nrl[i] = (1.0 - rate.get_attenuation_nrl(is_with_tabata=False) * timestep) * \
+            relative_attenuation_nrl[i] = (1.0 - rate.get_attenuation_nrl() * timestep) * \
                                           relative_attenuation_nrl[i - 1]
-            relative_attenuation_3d[i] = (1.0 - rate.get_attenuation_beb_tabata_3d() * timestep) * \
+            relative_attenuation_3d[i] = (1.0 - rate.get_attenuation_beb(True, 3) * timestep) * \
                                           relative_attenuation_3d[i - 1]
         if relative_attenuation_nrl[i] <= 0:
             relative_attenuation_nrl[i] = 0
