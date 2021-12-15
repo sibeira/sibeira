@@ -1,12 +1,11 @@
 import sys
+import os
 import matplotlib
-
-#sys.path.append('/media/matyi/home2/Documents/git/taiga-project/taiga/ext/renate_od/')
 import numpy
 
-from beam import Beam
+from rate import Rate
 
-sys.path.append('/media/matyi/home2/Documents/git/taiga-project/taiga/preproc/renate_od/')
+sys.path.append(os.environ['RENATE_OD'])
 
 from manager import RenateODManager
 from beamlet import set_beamlet, BeamletGeometry
@@ -74,22 +73,22 @@ def export_beamlet_profile(shot_number='17178', time='1097', species='Li', energ
     relative_attenuation_nrl = numpy.zeros_like(beamlet_geometry.rad)
     relative_attenuation_3d = numpy.zeros_like(beamlet_geometry.rad)
 
-    b = Beam(species=species, beam_energy=float(energy) * 1000.0)
-    v_beam = b.get_speed()
+    rate = Rate(species=species, beam_energy=float(energy) * 1000.0)
+    v_beam = rate.get_speed()
     timestep = (beamlet_geometry.rad[0] - beamlet_geometry.rad[1]) / v_beam
 
     for i in range(beamlet_geometry.rad.size):
         print(i)
-        b.set_profiles(electron_temperature=temperatures[i], electron_density=densities[i])
+        rate.set_profiles(electron_temperature=temperatures[i], electron_density=densities[i])
         if i == 0:
-            relative_attenuation_1d[i] = 1.0 - b.get_attenuation_beb() * timestep
-            relative_attenuation_nrl[i] = 1.0 - b.get_attenuation_nrl(is_with_tabata=False) * timestep
-            relative_attenuation_3d[i] = 1.0 - b.get_attenuation_beb_tabata_3d() * timestep
+            relative_attenuation_1d[i] = 1.0 - rate.get_attenuation_beb() * timestep
+            relative_attenuation_nrl[i] = 1.0 - rate.get_attenuation_nrl(is_with_tabata=False) * timestep
+            relative_attenuation_3d[i] = 1.0 - rate.get_attenuation_beb_tabata_3d() * timestep
         else:
-            relative_attenuation_1d[i] = (1.0 - b.get_attenuation_beb() * timestep) * relative_attenuation_1d[i - 1]
-            relative_attenuation_nrl[i] = (1.0 - b.get_attenuation_nrl(is_with_tabata=False) * timestep) * \
+            relative_attenuation_1d[i] = (1.0 - rate.get_attenuation_beb() * timestep) * relative_attenuation_1d[i - 1]
+            relative_attenuation_nrl[i] = (1.0 - rate.get_attenuation_nrl(is_with_tabata=False) * timestep) * \
                                           relative_attenuation_nrl[i - 1]
-            relative_attenuation_3d[i] = (1.0 - b.get_attenuation_beb_tabata_3d() * timestep) * \
+            relative_attenuation_3d[i] = (1.0 - rate.get_attenuation_beb_tabata_3d() * timestep) * \
                                           relative_attenuation_3d[i - 1]
         if relative_attenuation_nrl[i] <= 0:
             relative_attenuation_nrl[i] = 0
