@@ -7,21 +7,19 @@ from bebim.cross_section import CrossSection
 from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
 
-class Rate:
-    def __init__(self, species, beam_energy,
-                 electron_temperature=numpy.nan, electron_density=numpy.nan, ionisation_level=0):
-        self.beam = Beam(species, beam_energy, ionisation_level)
+class Rate(Beam):
+    def __init__(self, species, beam_energy, ionisation_level=0):
+        super().__init__(species, beam_energy, ionisation_level)
+        self.beb = CrossSection(1000, self.species, self.ionisation_level)
+        self.beb.set_polynomial()
+        self.tabata = CXCrossSection(1000, self.species)
+        self.tabata.set_polynomial()
 
+    def set_profiles(self, electron_temperature=numpy.nan, electron_density=numpy.nan):
         if ~numpy.isnan(electron_temperature):
             self.electron_temperature = electron_temperature
         if ~numpy.isnan(electron_density):
             self.electron_density = electron_density
-
-        self.beb = CrossSection(1000, self.beam.species, self.beam.ionisation_level)
-        self.beb.set_polynomial()
-
-        self.tabata = CXCrossSection(1000, self.beam.species)
-        self.tabata.set_polynomial()
 
     def integrand_1d_coefficient(self, v):
         velocity = v * self.velocity_normalisation_factor
@@ -95,5 +93,3 @@ class Rate:
         t = c.get_t()
         r = 1e-11 * numpy.sqrt(t) / c.B ** 1.5 / (6.0 + t) * numpy.exp(-1.0 / t)
         return r * self.electron_density
-
-
