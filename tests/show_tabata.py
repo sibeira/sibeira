@@ -23,7 +23,7 @@ def plot_tabata_profile(energy, cross_section, species, degree, factor=1):
     matplotlib.pyplot.ylabel(ylabel_text)
     ax.xaxis.set_label_coords(0.5, -0.09)
     ax_img = fig.add_subplot(111, label='ax_img')
-    img = matplotlib.pyplot.imread('tabata1988_' + species + '_' + degree + '.jpg')
+    img = matplotlib.pyplot.imread('tests/figures/tabata1988_' + species + '_' + degree + '.jpg')
     crop_img = img[62:3425, 467:3252]
     ax_img.set_zorder(999)
     ax.set_zorder(1000)

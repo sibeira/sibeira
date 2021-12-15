@@ -33,7 +33,7 @@ def plot_uddin_profile(energy, cross_section):
     matplotlib.pyplot.legend(bbox_to_anchor=(1.15, 0.35))
     ax.xaxis.set_label_coords(0.5, -0.09)
     ax_img = fig.add_subplot(111, label='ax_img')
-    img = matplotlib.pyplot.imread('uddin2015.jpg')
+    img = matplotlib.pyplot.imread('tests/figures/uddin2015.jpg')
     crop_img = img[10:930, 100:960]
     ax_img.set_zorder(999)
     ax.set_zorder(1000)
@@ -57,7 +57,7 @@ def plot_wareing_profile(normalised_energy, cross_section):
     matplotlib.pyplot.legend(loc='lower right')
     ax.xaxis.set_label_coords(1.08, -0.05)
     ax_img = fig.add_subplot(111, label='ax_img')
-    img = matplotlib.pyplot.imread('wareing1967.jpg')
+    img = matplotlib.pyplot.imread('tests/figures/wareing1967.jpg')
     crop_img = img[32:465, 130:1100]
     ax_img.set_zorder(999)
     ax.set_zorder(1000)
