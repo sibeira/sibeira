@@ -83,11 +83,32 @@ class RateNDIntegral:
         return self.integrate(self.integrand) / self.integrate(self.integrand_normalisation)
 
 
-class Rate1DIntegralElectron(RateNDIntegral):
+class RateNDIntegralElectron(RateNDIntegral):
     def __init__(self, electron_temperature, ion_velocity, beb):
         super().__init__(electron_temperature, ion_velocity)
-        self.beb = beb
+        self.cross_section = beb.f
 
+    def integrand(self, v):
+        velocity = v * self.electron_velocity_normalisation
+        kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
+        return self.maxwell(v) * velocity * self.cross_section(kinetic_energy)
+
+
+class RateNDIntegralIon(RateNDIntegral):
+    def __init__(self, electron_temperature, ion_velocity, tabata, tabata_double):
+        self.cross_section = tabata.f
+        self.cross_section_of_double_ionisation = tabata_double.f
+        super().__init__(electron_temperature, ion_velocity)
+
+    def integrand(self, alpha, v):
+        velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
+        kinetic_energy = 0.5 * self.deuterium_mass * velocity ** 2.0 / scipy.constants.elementary_charge
+        return self.maxwell(v) * velocity * \
+            (self.cross_section(kinetic_energy) +
+             2.0 * self.cross_section_of_double_ionisation(kinetic_energy))
+
+
+class Rate1DIntegralElectron(RateNDIntegralElectron):
     @staticmethod
     def integrate(function):
         return scipy.integrate.quad(function, 0, numpy.inf)[0]
@@ -95,18 +116,8 @@ class Rate1DIntegralElectron(RateNDIntegral):
     def integrand_normalisation(self, v):
         return self.maxwell(v)
 
-    def integrand(self, v):
-        velocity = v * self.electron_velocity_normalisation
-        kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
-        return self.maxwell(v) * velocity * self.beb.f(kinetic_energy)
 
-
-class Rate2DIntegralIon(RateNDIntegral):
-    def __init__(self, electron_temperature, ion_velocity, tabata, tabata_double):
-        self.tabata = tabata
-        self.tabata_double = tabata_double
-        super().__init__(electron_temperature, ion_velocity)
-
+class Rate2DIntegralIon(RateNDIntegralIon):
     @staticmethod
     def integrate(function):
         return scipy.integrate.dblquad(function, 0, numpy.inf, -numpy.pi, numpy.pi)[0]
@@ -114,28 +125,11 @@ class Rate2DIntegralIon(RateNDIntegral):
     def integrand_normalisation(self, alpha, v):
         return self.maxwell(v)
 
-    def integrand(self, alpha, v):
-        velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
-        kinetic_energy = 0.5 * self.deuterium_mass * velocity ** 2.0 / scipy.constants.elementary_charge
-        return self.maxwell(v) * velocity * \
-               (self.tabata.f(kinetic_energy) + 2.0 * self.tabata_double.f(kinetic_energy))
 
-
-class Rate3DIntegralIon(RateNDIntegral):
-    def __init__(self, electron_temperature, ion_velocity, tabata, tabata_double):
-        self.tabata = tabata
-        self.tabata_double = tabata_double
-        super().__init__(electron_temperature, ion_velocity)
-
+class Rate3DIntegralIon(RateNDIntegralIon):
     @staticmethod
     def integrate(function):
         return scipy.integrate.tplquad(function, 0, numpy.inf, -numpy.pi, numpy.pi, -numpy.pi/2, numpy.pi/2)[0]
 
     def integrand_normalisation(self, beta, alpha, v):
         return self.maxwell(v)
-
-    def integrand(self, beta, alpha, v):
-        velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
-        kinetic_energy = 0.5 * self.deuterium_mass * velocity ** 2.0 / scipy.constants.elementary_charge
-        return self.maxwell(v) * velocity * \
-               (self.tabata.f(kinetic_energy) + 2.0 * self.tabata_double.f(kinetic_energy))
