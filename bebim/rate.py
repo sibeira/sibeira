@@ -64,6 +64,10 @@ class RateNDIntegral:
     def maxwell(v):
         return scipy.stats.maxwell.pdf(v)
 
+    @staticmethod
+    def get_impact_energy(mass, velocity):
+        return 0.5 * mass * velocity ** 2 / scipy.constants.elementary_charge
+
     def get_coefficient(self):
         return self.integrate(self.integrand) / self.integrate(self.integrand_normalisation)
 
@@ -80,7 +84,7 @@ class RateNDIntegralElectron(RateNDIntegral):
 
     def integrand(self, v):
         velocity = v * self.electron_velocity_normalisation
-        impact_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
+        impact_energy = self.get_impact_energy(scipy.constants.electron_mass,  velocity)
         return self.maxwell(v) * velocity * self.cross_section(impact_energy)
 
 
@@ -102,7 +106,7 @@ class RateNDIntegralIon(RateNDIntegral):
 
     def integrand(self, alpha, v):
         velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
-        impact_energy = 0.5 * self.deuterium_mass * velocity ** 2.0 / scipy.constants.elementary_charge
+        impact_energy = self.get_impact_energy(self.deuterium_mass, velocity)
         return self.maxwell(v) * velocity * \
             (self.cross_section(impact_energy) +
              2.0 * self.cross_section_of_double_ionisation(impact_energy))
