@@ -55,9 +55,6 @@ class Rate(Beam):
 class RateNDIntegral:
     def __init__(self, electron_temperature, ion_velocity):
         self.normalisation_factor = 1
-        self.ion_velocity = ion_velocity
-        self.electron_velocity_normalisation = self.get_electron_velocity_normalisation_factor(electron_temperature)
-        self.ion_velocity_normalisation = self.get_ion_velocity_normalisation_factor(electron_temperature)
 
     @staticmethod
     def get_third_side_length(a, b, alpha):
@@ -74,6 +71,7 @@ class RateNDIntegral:
 class RateNDIntegralElectron(RateNDIntegral):
     def __init__(self, electron_temperature, ion_velocity, beb):
         super().__init__(electron_temperature, ion_velocity)
+        self.electron_velocity_normalisation = self.get_electron_velocity_normalisation_factor(electron_temperature)
         self.cross_section = beb.f
 
     @staticmethod
@@ -88,9 +86,11 @@ class RateNDIntegralElectron(RateNDIntegral):
 
 class RateNDIntegralIon(RateNDIntegral):
     def __init__(self, electron_temperature, ion_velocity, tabata, tabata_double):
+        self.deuterium_mass = self.get_deuterium_mass()
+        self.ion_velocity = ion_velocity
+        self.ion_velocity_normalisation = self.get_ion_velocity_normalisation_factor(electron_temperature)
         self.cross_section = tabata.f
         self.cross_section_of_double_ionisation = tabata_double.f
-        self.deuterium_mass = self.get_deuterium_mass()
         super().__init__(electron_temperature, ion_velocity)
 
     @staticmethod
