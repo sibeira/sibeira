@@ -31,9 +31,9 @@ class Rate(Beam):
         r = 1e-11 * numpy.sqrt(t) / c.B ** 1.5 / (6.0 + t) * numpy.exp(-1.0 / t)
         if is_with_tabata:
             if tabata_integration_dimension == 2:
-                r += Rate2DIntegralIon(self.electron_temperature, self.speed, self.tabata, self.tabata_double).get_coefficient()
+                r += Rate2DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             elif tabata_integration_dimension == 3:
-                r += Rate3DIntegralIon(self.electron_temperature, self.speed, self.tabata, self.tabata_double).get_coefficient()
+                r += Rate3DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             else:
                 raise ValueError
         return r * self.electron_density
@@ -41,12 +41,12 @@ class Rate(Beam):
     def get_attenuation_beb(self, is_with_tabata=False, tabata_integration_dimension=2):
         if self.electron_density == 0:
             return 0.0
-        r = Rate1DIntegralElectron(self.electron_temperature, self.speed, self.beb).get_coefficient()
+        r = Rate1DIntegralElectron(self.electron_temperature, self.speed, self.beb.f).get_coefficient()
         if is_with_tabata:
             if tabata_integration_dimension == 2:
-                r += Rate2DIntegralIon(self.electron_temperature, self.speed, self.tabata, self.tabata_double).get_coefficient()
+                r += Rate2DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             elif tabata_integration_dimension == 3:
-                r += Rate3DIntegralIon(self.electron_temperature, self.speed, self.tabata, self.tabata_double).get_coefficient()
+                r += Rate3DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             else:
                 raise ValueError
         return r * self.electron_density
@@ -69,10 +69,10 @@ class RateNDIntegral:
 
 
 class RateNDIntegralElectron(RateNDIntegral):
-    def __init__(self, electron_temperature, ion_velocity, beb):
+    def __init__(self, electron_temperature, ion_velocity, cross_section):
         super().__init__(electron_temperature, ion_velocity)
         self.electron_velocity_normalisation = self.get_electron_velocity_normalisation_factor(electron_temperature)
-        self.cross_section = beb.f
+        self.cross_section = cross_section
 
     @staticmethod
     def get_electron_velocity_normalisation_factor(electron_temperature):
@@ -85,12 +85,12 @@ class RateNDIntegralElectron(RateNDIntegral):
 
 
 class RateNDIntegralIon(RateNDIntegral):
-    def __init__(self, electron_temperature, ion_velocity, tabata, tabata_double):
+    def __init__(self, electron_temperature, ion_velocity, cross_section, cross_section_of_double_ionisation=0):
         self.deuterium_mass = self.get_deuterium_mass()
         self.ion_velocity = ion_velocity
         self.ion_velocity_normalisation = self.get_ion_velocity_normalisation_factor(electron_temperature)
-        self.cross_section = tabata.f
-        self.cross_section_of_double_ionisation = tabata_double.f
+        self.cross_section = cross_section
+        self.cross_section_of_double_ionisation = cross_section_of_double_ionisation
         super().__init__(electron_temperature, ion_velocity)
 
     @staticmethod
