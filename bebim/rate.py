@@ -55,7 +55,6 @@ class Rate(Beam):
 class RateNDIntegral:
     def __init__(self, electron_temperature, ion_velocity):
         self.normalisation_factor = 1
-        self.deuterium_mass = self.get_deuterium_mass()
         self.ion_velocity = ion_velocity
         self.electron_velocity_normalisation = self.get_electron_velocity_normalisation_factor(electron_temperature)
         self.ion_velocity_normalisation = self.get_ion_velocity_normalisation_factor(electron_temperature)
@@ -68,17 +67,6 @@ class RateNDIntegral:
     def maxwell(v):
         return scipy.stats.maxwell.pdf(v)
 
-    @staticmethod
-    def get_deuterium_mass():
-        return Beam('D', 0).get_mass()
-
-    @staticmethod
-    def get_electron_velocity_normalisation_factor(electron_temperature):
-        return numpy.sqrt(electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
-
-    def get_ion_velocity_normalisation_factor(self, electron_temperature):
-        return numpy.sqrt(electron_temperature * scipy.constants.elementary_charge / self.deuterium_mass)
-
     def get_coefficient(self):
         return self.integrate(self.integrand) / self.integrate(self.integrand_normalisation)
 
@@ -87,6 +75,10 @@ class RateNDIntegralElectron(RateNDIntegral):
     def __init__(self, electron_temperature, ion_velocity, beb):
         super().__init__(electron_temperature, ion_velocity)
         self.cross_section = beb.f
+
+    @staticmethod
+    def get_electron_velocity_normalisation_factor(electron_temperature):
+        return numpy.sqrt(electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
 
     def integrand(self, v):
         velocity = v * self.electron_velocity_normalisation
@@ -98,7 +90,15 @@ class RateNDIntegralIon(RateNDIntegral):
     def __init__(self, electron_temperature, ion_velocity, tabata, tabata_double):
         self.cross_section = tabata.f
         self.cross_section_of_double_ionisation = tabata_double.f
+        self.deuterium_mass = self.get_deuterium_mass()
         super().__init__(electron_temperature, ion_velocity)
+
+    @staticmethod
+    def get_deuterium_mass():
+        return Beam('D', 0).get_mass()
+
+    def get_ion_velocity_normalisation_factor(self, electron_temperature):
+        return numpy.sqrt(electron_temperature * scipy.constants.elementary_charge / self.deuterium_mass)
 
     def integrand(self, alpha, v):
         velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
