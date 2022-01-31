@@ -80,8 +80,8 @@ class RateNDIntegralElectron(RateNDIntegral):
 
     def integrand(self, v):
         velocity = v * self.electron_velocity_normalisation
-        kinetic_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
-        return self.maxwell(v) * velocity * self.cross_section(kinetic_energy)
+        impact_energy = 0.5 * scipy.constants.electron_mass * velocity ** 2 / scipy.constants.elementary_charge
+        return self.maxwell(v) * velocity * self.cross_section(impact_energy)
 
 
 class RateNDIntegralIon(RateNDIntegral):
@@ -102,10 +102,10 @@ class RateNDIntegralIon(RateNDIntegral):
 
     def integrand(self, alpha, v):
         velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
-        kinetic_energy = 0.5 * self.deuterium_mass * velocity ** 2.0 / scipy.constants.elementary_charge
+        impact_energy = 0.5 * self.deuterium_mass * velocity ** 2.0 / scipy.constants.elementary_charge
         return self.maxwell(v) * velocity * \
-            (self.cross_section(kinetic_energy) +
-             2.0 * self.cross_section_of_double_ionisation(kinetic_energy))
+            (self.cross_section(impact_energy) +
+             2.0 * self.cross_section_of_double_ionisation(impact_energy))
 
 
 class Rate1DIntegralElectron(RateNDIntegralElectron):
