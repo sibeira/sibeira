@@ -75,7 +75,7 @@ class RateNDIntegral:
 class RateNDIntegralElectron(RateNDIntegral):
     def __init__(self, electron_temperature, ion_velocity, cross_section):
         super().__init__(electron_temperature, ion_velocity)
-        self.electron_velocity_normalisation = self.get_electron_velocity_normalisation_factor(electron_temperature)
+        self.electron_velocity_normalisation_factor = self.get_electron_velocity_normalisation_factor(electron_temperature)
         self.cross_section = cross_section
 
     @staticmethod
@@ -83,16 +83,16 @@ class RateNDIntegralElectron(RateNDIntegral):
         return numpy.sqrt(electron_temperature * scipy.constants.elementary_charge / scipy.constants.electron_mass)
 
     def integrand(self, v):
-        velocity = v * self.electron_velocity_normalisation
-        impact_energy = self.get_impact_energy(scipy.constants.electron_mass,  velocity)
+        velocity = v * self.electron_velocity_normalisation_factor
+        impact_energy = self.get_impact_energy(scipy.constants.electron_mass, velocity)
         return self.maxwell(v) * velocity * self.cross_section(impact_energy)
 
 
 class RateNDIntegralIon(RateNDIntegral):
-    def __init__(self, electron_temperature, ion_velocity, cross_section, cross_section_of_double_ionisation=0):
+    def __init__(self, electron_temperature, ion_velocity, cross_section, cross_section_of_double_ionisation=lambda x: 0):
         self.deuterium_mass = self.get_deuterium_mass()
         self.ion_velocity = ion_velocity
-        self.ion_velocity_normalisation = self.get_ion_velocity_normalisation_factor(electron_temperature)
+        self.ion_velocity_normalisation_factor = self.get_ion_velocity_normalisation_factor(electron_temperature)
         self.cross_section = cross_section
         self.cross_section_of_double_ionisation = cross_section_of_double_ionisation
         super().__init__(electron_temperature, ion_velocity)
@@ -105,7 +105,7 @@ class RateNDIntegralIon(RateNDIntegral):
         return numpy.sqrt(electron_temperature * scipy.constants.elementary_charge / self.deuterium_mass)
 
     def integrand(self, alpha, v):
-        velocity = self.get_third_side_length(v * self.ion_velocity_normalisation, self.ion_velocity, alpha)
+        velocity = self.get_third_side_length(v * self.ion_velocity_normalisation_factor, self.ion_velocity, alpha)
         impact_energy = self.get_impact_energy(self.deuterium_mass, velocity)
         return self.maxwell(v) * velocity * \
             (self.cross_section(impact_energy) +
