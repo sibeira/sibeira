@@ -1,6 +1,6 @@
-import numpy
 import unittest
 from bebim.rate import *
+from bebim.integrator import Rate1DIntegralElectron, Rate2DIntegralIon
 
 
 class TestRate(unittest.TestCase):
