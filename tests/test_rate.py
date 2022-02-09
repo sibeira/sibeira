@@ -1,6 +1,7 @@
+import scipy.constants
 import unittest
 from bebim.rate import *
-from bebim.integrator import Rate1DIntegralElectron, Rate2DIntegralIon
+from bebim.integrator import ElectronRateIntegrator1D, IonRateIntegrator2D
 
 
 class TestRate(unittest.TestCase):
@@ -18,11 +19,11 @@ class TestRate(unittest.TestCase):
         return Beam('D', 0).get_mass()
 
     def test_normalisation_1d(self):
-        rate = Rate1DIntegralElectron(10, 10, lambda x: 1.0/self.get_velocity(scipy.constants.electron_mass, x))
+        rate = ElectronRateIntegrator1D(10, lambda x: 1.0 / self.get_velocity(scipy.constants.electron_mass, x))
         numpy.testing.assert_array_almost_equal(rate.get_coefficient(), 1, decimal=4,
                                                 err_msg='1D normalisation factor')
 
     def test_normalisation_2d(self):
-        rate = Rate2DIntegralIon(10, 10, lambda x: 1.0/self.get_velocity(self.get_deuterium_mass(), x))
+        rate = IonRateIntegrator2D(10, 10, lambda x: 1.0 / self.get_velocity(self.get_deuterium_mass(), x))
         numpy.testing.assert_array_almost_equal(rate.get_coefficient(), 1, decimal=4,
                                                 err_msg='2D normalisation factor')

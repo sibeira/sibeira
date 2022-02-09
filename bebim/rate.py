@@ -1,7 +1,7 @@
 import numpy
 from bebim.beam import Beam
 from bebim.cross_section import CrossSection
-from integrator import Rate1DIntegralElectron, Rate2DIntegralIon, Rate3DIntegralIon
+from integrator import ElectronRateIntegrator1D, IonRateIntegrator2D, IonRateIntegrator3D
 from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
 
@@ -29,9 +29,9 @@ class Rate(Beam):
         r = 1e-11 * numpy.sqrt(t) / c.B ** 1.5 / (6.0 + t) * numpy.exp(-1.0 / t)
         if is_with_tabata:
             if tabata_integration_dimension == 2:
-                r += Rate2DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
+                r += IonRateIntegrator2D(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             elif tabata_integration_dimension == 3:
-                r += Rate3DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
+                r += IonRateIntegrator3D(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             else:
                 raise ValueError
         return r * self.electron_density
@@ -39,12 +39,12 @@ class Rate(Beam):
     def get_attenuation_beb(self, is_with_tabata=False, tabata_integration_dimension=2):
         if self.electron_density == 0:
             return 0.0
-        r = Rate1DIntegralElectron(self.electron_temperature, self.speed, self.beb.f).get_coefficient()
+        r = ElectronRateIntegrator1D(self.electron_temperature, self.beb.f).get_coefficient()
         if is_with_tabata:
             if tabata_integration_dimension == 2:
-                r += Rate2DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
+                r += IonRateIntegrator2D(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             elif tabata_integration_dimension == 3:
-                r += Rate3DIntegralIon(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
+                r += IonRateIntegrator3D(self.electron_temperature, self.speed, self.tabata.f, self.tabata_double.f).get_coefficient()
             else:
                 raise ValueError
         return r * self.electron_density

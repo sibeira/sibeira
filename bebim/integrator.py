@@ -6,8 +6,8 @@ import scipy.stats
 from beam import Beam
 
 
-class RateNDIntegral:
-    def __init__(self, electron_temperature, ion_velocity):
+class RateIntegrator:
+    def __init__(self):
         self.normalisation_factor = 1
 
     @staticmethod
@@ -26,9 +26,9 @@ class RateNDIntegral:
         return self.integrate(self.integrand) / self.integrate(self.integrand_normalisation)
 
 
-class RateNDIntegralElectron(RateNDIntegral):
-    def __init__(self, electron_temperature, ion_velocity, cross_section):
-        super().__init__(electron_temperature, ion_velocity)
+class ElectronRateIntegrator(RateIntegrator):
+    def __init__(self, electron_temperature, cross_section):
+        super().__init__()
         self.electron_velocity_normalisation_factor = self.get_electron_velocity_normalisation_factor(electron_temperature)
         self.cross_section = cross_section
 
@@ -42,14 +42,14 @@ class RateNDIntegralElectron(RateNDIntegral):
         return self.maxwell(v) * velocity * self.cross_section(impact_energy)
 
 
-class RateNDIntegralIon(RateNDIntegral):
+class IonRateIntegrator(RateIntegrator):
     def __init__(self, electron_temperature, ion_velocity, cross_section, cross_section_of_double_ionisation=lambda x: 0):
         self.deuterium_mass = self.get_deuterium_mass()
         self.ion_velocity = ion_velocity
         self.ion_velocity_normalisation_factor = self.get_ion_velocity_normalisation_factor(electron_temperature)
         self.cross_section = cross_section
         self.cross_section_of_double_ionisation = cross_section_of_double_ionisation
-        super().__init__(electron_temperature, ion_velocity)
+        super().__init__()
 
     @staticmethod
     def get_deuterium_mass():
@@ -66,7 +66,7 @@ class RateNDIntegralIon(RateNDIntegral):
              2.0 * self.cross_section_of_double_ionisation(impact_energy))
 
 
-class Rate1DIntegralElectron(RateNDIntegralElectron):
+class ElectronRateIntegrator1D(ElectronRateIntegrator):
     @staticmethod
     def integrate(function):
         return scipy.integrate.quad(function, 0, numpy.inf)[0]
@@ -75,7 +75,7 @@ class Rate1DIntegralElectron(RateNDIntegralElectron):
         return self.maxwell(v)
 
 
-class Rate2DIntegralIon(RateNDIntegralIon):
+class IonRateIntegrator2D(IonRateIntegrator):
     @staticmethod
     def integrate(function):
         return scipy.integrate.dblquad(function, 0, numpy.inf, -numpy.pi, numpy.pi)[0]
@@ -84,7 +84,7 @@ class Rate2DIntegralIon(RateNDIntegralIon):
         return self.maxwell(v)
 
 
-class Rate3DIntegralIon(RateNDIntegralIon):
+class IonRateIntegrator3D(IonRateIntegrator):
     @staticmethod
     def integrate(function):
         return scipy.integrate.tplquad(function, 0, numpy.inf, -numpy.pi, numpy.pi, -numpy.pi/2, numpy.pi/2)[0]
