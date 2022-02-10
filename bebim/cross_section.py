@@ -35,16 +35,16 @@ class CrossSection:
         a0 = 0.52918e-10
         return 4.0 * numpy.pi * a0**2 * self.N * (RYDBERG / self.B)**2
 
-    def calculate(self):
-        ln_t = numpy.log(self.t)
-        return self.S / (self.t + (self.u + 1.0) / self.n) * (
-            self.Q * ln_t / 2.0 * (1.0 - self.t**(-2)) +
-            (2.0 - self.Q) * (1.0 - 1.0/self.t - (ln_t / (self.t + 1.0)))
+    def calculate(self, energy):
+        t = self.get_t(energy)
+        ln_t = numpy.log(t)
+        return self.S / (t + (self.u + 1.0) / self.n) * (
+            self.Q * ln_t / 2.0 * (1.0 - t**(-2)) +
+            (2.0 - self.Q) * (1.0 - 1.0/t - (ln_t / (t + 1.0)))
         )
 
     def set_polynomial(self):
         energy = numpy.logspace(0.75, 5, 50)
-        self.t = self.get_t(energy)
-        cross_section = self.calculate()
+        cross_section = self.calculate(energy)
         self.f = scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
 
