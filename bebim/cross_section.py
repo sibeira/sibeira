@@ -4,8 +4,7 @@ from bebim.species import *
 
 
 class CrossSection:
-    def __init__(self, energy, species, ionisation_level=0, with_Q=True):
-        self.energy = energy
+    def __init__(self, species, ionisation_level=0, with_Q=True):
         if ionisation_level == 0:
             self.o = OrbitalConstants(species)
         elif ionisation_level == 1:
@@ -22,13 +21,12 @@ class CrossSection:
         self.U = self.o.get('U')
         self.N = self.o.get('N')
         self.n = self.o.get('n')
-        self.t = self.get_t()
         self.u = self.get_u()
         self.S = self.get_S()
         self.f = lambda: None
 
-    def get_t(self):
-        return self.energy/self.B
+    def get_t(self, energy):
+        return energy/self.B
 
     def get_u(self):
         return self.U/self.B
@@ -46,8 +44,7 @@ class CrossSection:
 
     def set_polynomial(self):
         energy = numpy.logspace(0.75, 5, 50)
-        self.energy = energy
-        self.t = self.get_t()
+        self.t = self.get_t(energy)
         cross_section = self.calculate()
         self.f = scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
 

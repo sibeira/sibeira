@@ -38,8 +38,8 @@ def show_single_lithium_cross_exchange_ionisation():
     species = 'Li'
     degree = 'single'
     energy = numpy.logspace(1.3, 6, 50)
-    c = CrossSection(energy, species, degree)
-    cross_section = c.calculate() * 1e4
+    c = CrossSection(species, degree)
+    cross_section = c.calculate(energy) * 1e4
     plot_tabata_profile(energy, cross_section, species, degree)
 
 
@@ -47,8 +47,8 @@ def show_double_magnesium_cross_exchange_ionisation():
     species = 'Mg'
     degree = 'double'
     energy = numpy.logspace(2, 6, 50)
-    c = CrossSection(energy, species, degree)
-    cross_section = c.calculate() * 1e4
+    c = CrossSection(species, degree)
+    cross_section = c.calculate(energy) * 1e4
     plot_tabata_profile(energy, cross_section, species, degree, factor=0.1)
 
 
