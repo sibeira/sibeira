@@ -23,7 +23,6 @@ class CrossSection:
         self.n = self.o.get('n')
         self.u = self.get_u()
         self.S = self.get_S()
-        self.f = lambda: None
 
     def get_t(self, energy):
         return energy/self.B
@@ -43,8 +42,7 @@ class CrossSection:
             (2.0 - self.Q) * (1.0 - 1.0/t - (ln_t / (t + 1.0)))
         )
 
-    def set_polynomial(self):
+    def get_polynomial(self):
         energy = numpy.logspace(0.75, 5, 50)
         cross_section = self.calculate(energy)
-        self.f = scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
-
+        return scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")

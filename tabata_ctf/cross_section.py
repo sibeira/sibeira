@@ -10,7 +10,6 @@ class CrossSection:
         self.species = species
         self.degree = degree
         self.tabata_data = self.get_tabata_data()
-        self.f = lambda: None
 
     def get_tabata_data(self):
         tabata_dataframe = pandas.read_csv(os.path.dirname(__file__) + '/' + self.degree + '.dat', sep='\t')
@@ -46,7 +45,7 @@ class CrossSection:
         except KeyError:
             raise KeyError('Broken database, missing argument')
 
-    def set_polynomial(self):
+    def get_polynomial(self):
         energy = numpy.logspace(0.75, 5, 50)
         cross_section = self.calculate(energy)
-        self.f = scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
+        return scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
