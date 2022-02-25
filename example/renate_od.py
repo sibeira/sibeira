@@ -1,7 +1,8 @@
 import sys
 import os
-import matplotlib
+import matplotlib.pyplot
 import numpy
+import scipy.integrate
 
 from rate import Rate
 
@@ -13,14 +14,44 @@ from profiles import Profiles
 from utils import *
 
 
+def get_export_name(mode):
+    return 'atomic' + ('' if mode == 'plot' else '_' + mode)
+
+
+def test_export_name():
+    print(get_export_name('plot'))
+    print(get_export_name('log'))
+    print(get_export_name('lorem_ipsum'))
+
+
 def plot_attenuation_profile(shot_number, time, species, energy, radial_coordinate,
-                             relative_attenuation, relative_attenuation2, relative_attenuation3, relative_attenuation4):
+                             relative_attenuation_from_renate_od,
+                             relative_attenuation_from_renate_od_electron,
+                             relative_attenuation_from_beb,
+                             relative_attenuation_from_nrl,
+                             relative_attenuation_from_beb_tabata,
+                             relative_attenuation_from_nrl_tabata,
+                             mode='plot'):
     fig, ax = matplotlib.pyplot.subplots()
     fig.set_size_inches(5, 2)
-    ax.plot(radial_coordinate, relative_attenuation, '-', linewidth=2, label='RENATE-OD')
-    #ax.plot(radial_coordinate, relative_attenuation2, '-', linewidth=1, label='BEB')
-    #ax.plot(radial_coordinate, relative_attenuation3, '--', linewidth=1.5, label='NRL')
-    ax.plot(radial_coordinate, relative_attenuation4, 'r--', linewidth=1, label='BEB+Tabata 3D')
+    if mode == 'log':
+        plot = getattr(ax, 'semilogy')
+    else:
+        plot = getattr(ax, mode)
+    export_name = get_export_name(mode)
+
+    plot(radial_coordinate, relative_attenuation_from_renate_od,
+         '-', linewidth=2, facecolor='tab:blue', label='RENATE-OD')
+    plot(radial_coordinate, relative_attenuation_from_beb_tabata,
+         '-', linewidth=1.5, facecolor='tab:red', label='BEB+Tabata 3D')
+    plot(radial_coordinate, relative_attenuation_from_nrl_tabata,
+         '-', linewidth=1.5, facecolor='tab:orange', label='NRL+Tabata 3D')
+    plot(radial_coordinate, relative_attenuation_from_renate_od_electron,
+         '--', linewidth=1, facecolor='tab:blue', label='RENATE-OD (no electron)')
+    plot(radial_coordinate, relative_attenuation_from_beb,
+         '--', linewidth=1, facecolor='tab:red', label='BEB')
+    plot(radial_coordinate, relative_attenuation_from_nrl,
+         '--', linewidth=1.5, facecolor='tab:orange', label='NRL')
     ax.legend()
 
     matplotlib.pyplot.xlim(0.6, 0.7399)
@@ -30,34 +61,19 @@ def plot_attenuation_profile(shot_number, time, species, energy, radial_coordina
     matplotlib.pyplot.ylabel('neutral beam attenuation')
     matplotlib.pyplot.title('COMPASS #' + shot_number + ' (' + time + ' ms, '+species + ', ' + energy + ' keV)')
 
-    matplotlib.pyplot.savefig('atomic.png')
-    matplotlib.pyplot.savefig('atomic.pdf')
-    matplotlib.pyplot.show()
-
-    fig, ax = matplotlib.pyplot.subplots()
-    fig.set_size_inches(5, 2)
-    ax.semilogy(radial_coordinate, relative_attenuation, '-', linewidth=2, label='RENATE-OD')
-    ax.semilogy(radial_coordinate, relative_attenuation2, '-', linewidth=1, label='BEB')
-    ax.semilogy(radial_coordinate, relative_attenuation3, '--', linewidth=1.5, label='NRL')
-    ax.semilogy(radial_coordinate, relative_attenuation4, 'r--', linewidth=1, label='BEB+Tabata 3D')
-    ax.legend()
-
-    matplotlib.pyplot.xlim(0.6, 0.7399)
-    matplotlib.pyplot.minorticks_on()
-    matplotlib.pyplot.grid(which='major')
-    matplotlib.pyplot.xlabel('$R$ [m]', labelpad=-10.5, loc='right')
-    matplotlib.pyplot.ylabel('neutral beam attenuation')
-    matplotlib.pyplot.title('COMPASS #' + shot_number + ' (' + time + ' ms)')
-
-    matplotlib.pyplot.savefig('atomic_log.png')
-    matplotlib.pyplot.savefig('atomic_log.pdf')
+    matplotlib.pyplot.savefig(export_name + '.png')
+    matplotlib.pyplot.savefig(export_name + '.pdf')
     matplotlib.pyplot.show()
 
 
-def export_beamlet_profile(shot_number='17178', time='1097', species='Li', energy='80'):
+def plot_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='80'):
     z = 0
     tor = 0
     beamlet_geometry = set_beamlet(z, tor)
+
+    r = RenateODManager(beamlet_geometry, shot_number, time, species, energy, 'just electron')
+    radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
+    relative_attenuation_rod_no_ion = relative_attenuation_rod.fillna(0)
 
     r = RenateODManager(beamlet_geometry, shot_number, time, species, energy)
     radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
@@ -68,37 +84,42 @@ def export_beamlet_profile(shot_number='17178', time='1097', species='Li', energ
         assert ValueError
     temperatures = p.get_temperature()
     densities = p.get_density()
-    relative_attenuation_1d = numpy.zeros_like(beamlet_geometry.rad)
-    relative_attenuation_nrl = numpy.zeros_like(beamlet_geometry.rad)
-    relative_attenuation_3d = numpy.zeros_like(beamlet_geometry.rad)
+
+    rate_beb = numpy.zeros_like(beamlet_geometry.rad)
+    rate_nrl = numpy.zeros_like(beamlet_geometry.rad)
+    rate_beb_tabata = numpy.zeros_like(beamlet_geometry.rad)
+    rate_nrl_tabata = numpy.zeros_like(beamlet_geometry.rad)
 
     rate = Rate(species=species, beam_energy=float(energy) * 1000.0)
     v_beam = rate.get_speed()
-    timestep = (beamlet_geometry.rad[0] - beamlet_geometry.rad[1]) / v_beam
 
     for i in range(beamlet_geometry.rad.size):
         print(i)
         rate.set_profiles(electron_temperature=temperatures[i], electron_density=densities[i])
-        if i == 0:
-            relative_attenuation_1d[i] = 1.0 - rate.get_attenuation_beb() * timestep
-            relative_attenuation_nrl[i] = 1.0 - rate.get_attenuation_nrl() * timestep
-            relative_attenuation_3d[i] = 1.0 - rate.get_attenuation_beb(True, 2) * timestep
-        else:
-            relative_attenuation_1d[i] = (1.0 - rate.get_attenuation_beb() * timestep) * relative_attenuation_1d[i - 1]
-            relative_attenuation_nrl[i] = (1.0 - rate.get_attenuation_nrl() * timestep) * \
-                                          relative_attenuation_nrl[i - 1]
-            relative_attenuation_3d[i] = (1.0 - rate.get_attenuation_beb(True, 2) * timestep) * \
-                                          relative_attenuation_3d[i - 1]
-        if relative_attenuation_nrl[i] <= 0:
-            relative_attenuation_nrl[i] = 0
-        if i == 100:
-            break
+        rate_beb[i] = rate.get_attenuation_beb() / v_beam
+        rate_nrl[i] = rate.get_attenuation_nrl() / v_beam
+        rate_beb_tabata[i] = rate.get_attenuation_beb(is_with_tabata=True, tabata_integration_dimension=2) / v_beam
+        rate_nrl_tabata[i] = rate.get_attenuation_nrl(is_with_tabata=True, tabata_integration_dimension=2) / v_beam
+
+    relative_attenuation_from_beb = numpy.exp(scipy.integrate.cumulative_trapezoid(rate_beb, beamlet_geometry.rad, initial=0))
+    relative_attenuation_from_nrl = numpy.exp(scipy.integrate.cumulative_trapezoid(rate_nrl, beamlet_geometry.rad, initial=0))
+    relative_attenuation_from_beb_tabata =\
+        numpy.exp(scipy.integrate.cumulative_trapezoid(rate_beb_tabata, beamlet_geometry.rad, initial=0))
+    relative_attenuation_from_nrl_tabata = \
+        numpy.exp(scipy.integrate.cumulative_trapezoid(rate_nrl_tabata, beamlet_geometry.rad, initial=0))
 
     plot_attenuation_profile(shot_number, time, species, energy, radial_coordinates,
-                             relative_attenuation_rod, relative_attenuation_1d, relative_attenuation_nrl, relative_attenuation_3d)
+                             relative_attenuation_rod, relative_attenuation_rod_no_ion,
+                             relative_attenuation_from_beb, relative_attenuation_from_nrl,
+                             relative_attenuation_from_beb_tabata, relative_attenuation_from_nrl_tabata)
+    plot_attenuation_profile(shot_number, time, species, energy, radial_coordinates,
+                             relative_attenuation_rod, relative_attenuation_rod_no_ion,
+                             relative_attenuation_from_beb, relative_attenuation_from_nrl,
+                             relative_attenuation_from_beb_tabata, relative_attenuation_from_nrl_tabata,
+                             mode='log')
 
 
 if __name__ == "__main__":
     a_shot_number = '17178'
     a_time = '1097'
-    export_beamlet_profile(shot_number=a_shot_number, time=a_time)
+    plot_attenuation_comparison(shot_number=a_shot_number, time=a_time, species='Na')
