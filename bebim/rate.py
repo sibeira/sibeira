@@ -22,17 +22,17 @@ class Rate(Beam):
         r = 1e-11 * numpy.sqrt(t) / c.B ** 1.5 / (6.0 + t) * numpy.exp(-1.0 / t)
         if is_with_tabata:
             r += RateIntegrator('charge exchange',
-                                self.species, self.speed, self.electron_temperature, tabata_integration_dimension)\
+                                self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
                 .get_coefficient()
         return r * self.electron_density
 
     def get_attenuation_beb(self, is_with_tabata=False, tabata_integration_dimension=2):
         if self.electron_density == 0:
             return 0.0
-        r = RateIntegrator('electron impact ionisation', self.species, self.speed, self.electron_temperature, 1)\
+        r = RateIntegrator('electron impact ionisation', self.species, self.beam_energy, self.electron_temperature, 1)\
             .get_coefficient()
         if is_with_tabata:
             r += RateIntegrator('charge exchange',
-                                self.species, self.speed, self.electron_temperature, tabata_integration_dimension)\
+                                self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
                 .get_coefficient()
         return r * self.electron_density
