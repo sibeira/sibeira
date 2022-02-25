@@ -41,17 +41,17 @@ def plot_attenuation_profile(shot_number, time, species, energy, radial_coordina
     export_name = get_export_name(mode)
 
     plot(radial_coordinate, relative_attenuation_from_renate_od,
-         '-', linewidth=2, facecolor='tab:blue', label='RENATE-OD')
+         '-', linewidth=2, color='tab:blue', label='RENATE-OD')
     plot(radial_coordinate, relative_attenuation_from_beb_tabata,
-         '-', linewidth=1.5, facecolor='tab:red', label='BEB+Tabata 3D')
+         '-', linewidth=1.5, color='tab:red', label='BEB+Tabata 3D')
     plot(radial_coordinate, relative_attenuation_from_nrl_tabata,
-         '-', linewidth=1.5, facecolor='tab:orange', label='NRL+Tabata 3D')
+         '-', linewidth=1.5, color='tab:orange', label='NRL+Tabata 3D')
     plot(radial_coordinate, relative_attenuation_from_renate_od_electron,
-         '--', linewidth=1, facecolor='tab:blue', label='RENATE-OD (no electron)')
+         '--', linewidth=1, color='tab:blue', label='RENATE-OD (no electron)')
     plot(radial_coordinate, relative_attenuation_from_beb,
-         '--', linewidth=1, facecolor='tab:red', label='BEB')
+         '--', linewidth=1, color='tab:red', label='BEB')
     plot(radial_coordinate, relative_attenuation_from_nrl,
-         '--', linewidth=1.5, facecolor='tab:orange', label='NRL')
+         '--', linewidth=1.5, color='tab:orange', label='NRL')
     ax.legend()
 
     matplotlib.pyplot.xlim(0.6, 0.7399)
