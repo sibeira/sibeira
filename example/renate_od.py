@@ -14,14 +14,15 @@ from profiles import Profiles
 from utils import *
 
 
-def get_export_name(mode):
-    return 'atomic' + ('' if mode == 'plot' else '_' + mode)
+def get_export_name(mode, shot_number, time, species):
+    directory_path = os.path.dirname(os.path.abspath(__file__))
+    return directory_path + '/figs/' + species + '_' + str(shot_number) + '_' + str(time) + ('' if mode == 'plot' else '_' + mode)
 
 
 def test_export_name():
-    print(get_export_name('plot'))
-    print(get_export_name('log'))
-    print(get_export_name('lorem_ipsum'))
+    print(get_export_name('plot', 12345, 678, 'test'))
+    print(get_export_name('log', 12345, 678, 'test'))
+    print(get_export_name('lorem_ipsum', 12345, 678, 'test'))
 
 
 def plot_attenuation_profile(shot_number, time, species, energy, radial_coordinate,
@@ -33,12 +34,12 @@ def plot_attenuation_profile(shot_number, time, species, energy, radial_coordina
                              relative_attenuation_from_nrl_tabata,
                              mode='plot'):
     fig, ax = matplotlib.pyplot.subplots()
-    fig.set_size_inches(5, 2)
+    fig.set_size_inches(6, 2)
     if mode == 'log':
         plot = getattr(ax, 'semilogy')
     else:
         plot = getattr(ax, mode)
-    export_name = get_export_name(mode)
+    export_name = get_export_name(mode, shot_number, time, species)
 
     plot(radial_coordinate, relative_attenuation_from_renate_od,
          '-', linewidth=2, color='tab:blue', label='RENATE-OD')
@@ -47,26 +48,40 @@ def plot_attenuation_profile(shot_number, time, species, energy, radial_coordina
     plot(radial_coordinate, relative_attenuation_from_nrl_tabata,
          '-', linewidth=1.5, color='tab:orange', label='NRL+Tabata 3D')
     plot(radial_coordinate, relative_attenuation_from_renate_od_electron,
-         '--', linewidth=1, color='tab:blue', label='RENATE-OD (no electron)')
+         '--', linewidth=1, color='tab:blue', label='RENATE-OD ($n_i=0$)')
     plot(radial_coordinate, relative_attenuation_from_beb,
          '--', linewidth=1, color='tab:red', label='BEB')
     plot(radial_coordinate, relative_attenuation_from_nrl,
          '--', linewidth=1.5, color='tab:orange', label='NRL')
-    ax.legend()
+    ax.legend(bbox_to_anchor=(1.0, 0.5), loc="center left", borderaxespad=0, frameon=False)
 
     matplotlib.pyplot.xlim(0.6, 0.7399)
     matplotlib.pyplot.minorticks_on()
     matplotlib.pyplot.grid(which='major')
-    matplotlib.pyplot.xlabel('$R$ [m]', labelpad=-10.5, loc='right')
+    matplotlib.pyplot.xlabel('$R$ [m]')
+    ax.xaxis.set_label_coords(1.0, -0.055)
     matplotlib.pyplot.ylabel('neutral beam attenuation')
-    matplotlib.pyplot.title('COMPASS #' + shot_number + ' (' + time + ' ms, '+species + ', ' + energy + ' keV)')
+    matplotlib.pyplot.title('COMPASS #' + str(shot_number) + ' (' + str(time) + ' ms, '
+                            + species + ', ' + str(energy) + ' keV)')
 
+    matplotlib.pyplot.subplots_adjust(right=0.7)
     matplotlib.pyplot.savefig(export_name + '.png')
     matplotlib.pyplot.savefig(export_name + '.pdf')
     matplotlib.pyplot.show()
 
 
-def plot_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='80'):
+def test_plot_attenuation_profile():
+    r = numpy.linspace(0.6, 0.74, 11)
+    p1 = numpy.random.random_sample(r.shape)
+    p2 = numpy.random.random_sample(r.shape)
+    p3 = numpy.random.random_sample(r.shape)
+    p4 = numpy.random.random_sample(r.shape)
+    p5 = numpy.random.random_sample(r.shape)
+    p6 = numpy.random.random_sample(r.shape)
+    plot_attenuation_profile(12345, 678, 'test', 123, r, p1, p2, p3, p4, p5, p6)
+
+
+def run_attenuation_comparison(shot_number, time, species, energy):
     z = 0
     tor = 0
     beamlet_geometry = set_beamlet(z, tor)
@@ -120,6 +135,9 @@ def plot_attenuation_comparison(shot_number='17178', time='1097', species='Li', 
 
 
 if __name__ == "__main__":
-    a_shot_number = '17178'
-    a_time = '1097'
-    plot_attenuation_comparison(shot_number=a_shot_number, time=a_time, species='Na')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='40')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='60')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='80')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='40')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='60')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='80')
