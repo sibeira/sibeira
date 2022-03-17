@@ -3,7 +3,7 @@ import scipy.constants
 import scipy.integrate
 import scipy.stats
 
-from beam import Beam
+from bebim.beam import Beam
 from bebim.cross_section import CrossSection
 from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
