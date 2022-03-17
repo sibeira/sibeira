@@ -71,25 +71,25 @@ def plot_wareing_profile(normalised_energy, cross_section):
 def show_hydrogen_primary_ionisation():
     reference_energy, reference_cross_section = read_reference('H')
     energy = reference_energy
-    c = CrossSection(energy, 'H', 0, with_Q=False)
+    c = CrossSection('H', 0, with_Q=False)
     y_unit = 1e-20
-    cross_section = c.calculate() / y_unit
+    cross_section = c.calculate(energy) / y_unit
     plot_profiles('H', y_unit, energy, cross_section, reference_energy, reference_cross_section)
 
 
 # MA Uddin et al., Phys. Rev. A 72, 032715, 2015
 def show_lithium_primary_ionisation():
     energy = numpy.logspace(0.75, 5, 50)
-    c = CrossSection(energy, 'Li', 0, with_Q=False)
-    cross_section = c.calculate() / 1e-20
+    c = CrossSection('Li', 0, with_Q=False)
+    cross_section = c.calculate(energy) / 1e-20
     plot_uddin_profile(energy, cross_section)
 
 
 # JB Wareing et al., Proc. Phys. Soc. 91 887, 1967
 def show_lithium_secondary_ionisation():
     energy = numpy.linspace(75, 1000, 50)
-    c = CrossSection(energy, 'Li', 1, with_Q=False)
-    cross_section = c.calculate() / 1e-22
+    c = CrossSection('Li', 1, with_Q=False)
+    cross_section = c.calculate(energy) / 1e-22
     normalised_energy = c.get_t()
     plot_wareing_profile(normalised_energy, cross_section)
 
@@ -97,9 +97,9 @@ def show_lithium_secondary_ionisation():
 # B Peart et al., Journ. Phys. B 2(12), 1969
 def show_lithium_secondary_ionisation_high_energies():
     energy = numpy.logspace(3.5, 4.5, 50)
-    c = CrossSection(energy, 'Li', 1, with_Q=False)
+    c = CrossSection('Li', 1, with_Q=False)
     y_unit = 1e-22
-    cross_section = c.calculate() / y_unit
+    cross_section = c.calculate(energy) / y_unit
     reference_energy, reference_cross_section, reference_relative_error = read_reference('Li2')
     plot_profiles('Li^+->Li^{2+}', y_unit, energy, cross_section, reference_energy, reference_cross_section, reference_relative_error)
 

@@ -28,3 +28,4 @@ jobs:
           python -m unittest -v tests.test_species
           python -m unittest -v tests.test_cross_section
           python -m unittest -v tests.test_tabata
+          python -m unittest -v tests.test_rate

@@ -6,12 +6,10 @@ import pandas
 
 # T Tabata et al., Nucl. Inst. Meth. Phys. Res. B, 31 (3), 1988
 class CrossSection:
-    def __init__(self, energy, species, degree='single'):
-        self.energy = energy
+    def __init__(self, species, degree='single'):
         self.species = species
         self.degree = degree
         self.tabata_data = self.get_tabata_data()
-        self.f = lambda: None
 
     def get_tabata_data(self):
         tabata_dataframe = pandas.read_csv(os.path.dirname(__file__) + '/' + self.degree + '.dat', sep='\t')
@@ -35,9 +33,9 @@ class CrossSection:
         a[nan_indices] = 0.0
         return a
 
-    def calculate(self):
+    def calculate(self, energy):
         try:
-            E1 = self.energy / 1000.0 - self.tabata_data['Et'].to_numpy()
+            E1 = energy / 1000.0 - self.tabata_data['Et'].to_numpy()
             sigma0 = 1e-20
             cross_section = sigma0 * (self.get_f(E1) +
                                       self.tabata_data['a7'].to_numpy() *
@@ -47,8 +45,7 @@ class CrossSection:
         except KeyError:
             raise KeyError('Broken database, missing argument')
 
-    def set_polynomial(self):
+    def get_polynomial(self):
         energy = numpy.logspace(0.75, 5, 50)
-        self.energy = energy
-        cross_section = self.calculate()
-        self.f = scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
+        cross_section = self.calculate(energy)
+        return scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
