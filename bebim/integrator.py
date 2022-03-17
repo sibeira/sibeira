@@ -25,8 +25,8 @@ class RateIntegrator:
         return self.integrate(self.integrand) / self.integrate(self.integrand_normalisation)
 
     @staticmethod
-    def get_third_side_length(a, b, alpha):
-        return numpy.sqrt(a ** 2 + b ** 2 - 2 * a * b * numpy.cos(alpha))
+    def get_third_side_length(a, b, alpha, beta=0):
+        return numpy.sqrt(a ** 2 + b ** 2 - 2 * a * b * numpy.cos(alpha) * numpy.cos(beta))
 
     @staticmethod
     def maxwell(v):
@@ -70,6 +70,10 @@ class RateIntegrator:
             self.integrand = self.integrand_2d
             self.integrand_normalisation = self.integrand_normalisation_2d
             self.integrate = self.integrate_2d
+        elif dimension == 3:
+            self.integrand = self.integrand_3d
+            self.integrand_normalisation = self.integrand_normalisation_3d
+            self.integrate = self.integrate_3d
         else:
             raise ValueError('Invalid integration dimension: ' + str(dimension))
 
@@ -111,3 +115,8 @@ class RateIntegrator:
 
     def integrand_normalisation_3d(self, beta, alpha, v):
         return self.maxwell(v)
+
+    def integrand_3d(self, beta, alpha, v):
+        velocity = self.get_third_side_length(v * self.maxwell_normalisation_factor, self.beam_speed, alpha, beta)
+        impact_energy = self.get_impact_energy(velocity)
+        return self.maxwell(v) * velocity * self.cross_section(impact_energy)
