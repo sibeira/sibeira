@@ -1,7 +1,7 @@
 import numpy
 from bebim.beam import Beam
 from bebim.cross_section import CrossSection
-from integrator import RateIntegrator
+from bebim.integrator import RateIntegrator
 
 
 class Rate(Beam):
