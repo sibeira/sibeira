@@ -1,4 +1,4 @@
-from species import *
+from bebim.species import *
 import unittest
 
 
@@ -14,10 +14,18 @@ class TestSpecies(unittest.TestCase):
     def test_helium(self):
         o = OrbitalConstants('He')
         self.assertEqual(24.587389011, o.get('B'), 'B for helium')
-        self.assertEqual(3*RYDBERG, o.get('U'), 'U for helium')
+        self.assertEqual(39.51, o.get('U'), 'U for helium')
         self.assertEqual(2, o.get('N'), 'N for helium')
         self.assertEqual(0.8841, o.get('Q'), 'Q for helium')
         self.assertEqual(1, o.get('n'), 'n for helium')
+
+    def test_sodium(self):
+        o = OrbitalConstants('Na')
+        self.assertEqual(5.13907696, o.get('B'), 'B for sodium')
+        self.assertEqual(5.13907696, o.get('U'), 'U for sodium')
+        self.assertEqual(1, o.get('N'), 'N for sodium')
+        self.assertEqual(1, o.get('Q'), 'Q for sodium')
+        self.assertEqual(3, o.get('n'), 'n for sodium')
 
     def test_caesium(self):
         o = OrbitalConstants('Cs')
@@ -25,7 +33,7 @@ class TestSpecies(unittest.TestCase):
         self.assertEqual(3.89390572743, o.get('U'), 'U for caesium')
         self.assertEqual(1, o.get('N'), 'N for caesium')
         self.assertEqual(1, o.get('Q'), 'Q for caesium')
-        self.assertEqual(1, o.get('n'), 'n for caesium')
+        self.assertEqual(6, o.get('n'), 'n for caesium')
 
     def test_lithium_ion(self):
         o = IonOrbitalConstants('Li')

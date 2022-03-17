@@ -1,7 +1,7 @@
 import numpy
 import unittest
-from cross_section import CrossSection
-from read_reference import read_reference
+from bebim.cross_section import CrossSection
+from tests.read_reference import read_reference
 
 
 class TestCrossSection(unittest.TestCase):
@@ -9,8 +9,8 @@ class TestCrossSection(unittest.TestCase):
         reference_energy, reference_cross_section = read_reference('H_with_Q')
 
         energy = reference_energy
-        c = CrossSection(energy, 'H', 0)
-        cross_section = c.calculate() / 1e-20
+        c = CrossSection('H', 0)
+        cross_section = c.calculate(energy) / 1e-20
 
         numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=4,
                                                 err_msg='Cross section test for hydrogen')
@@ -19,8 +19,8 @@ class TestCrossSection(unittest.TestCase):
         reference_energy, reference_cross_section = read_reference('H')
 
         energy = reference_energy
-        c = CrossSection(energy, 'H', 0, with_Q=False)
-        cross_section = c.calculate() / 1e-20
+        c = CrossSection('H', 0, with_Q=False)
+        cross_section = c.calculate(energy) / 1e-20
 
         numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=4,
                                                 err_msg='Cross section test for hydrogen (Q=1)')
@@ -29,8 +29,8 @@ class TestCrossSection(unittest.TestCase):
         reference_energy, reference_cross_section = read_reference('He_with_Q')
 
         energy = reference_energy
-        c = CrossSection(energy, 'He', 0)
-        cross_section = c.calculate() / 1e-20
+        c = CrossSection('He', 0)
+        cross_section = c.calculate(energy) / 1e-20
 
         numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=3,
                                                 err_msg='Cross section test for helium')
@@ -38,9 +38,9 @@ class TestCrossSection(unittest.TestCase):
     def test_helium(self):
         reference_energy, reference_cross_section = read_reference('He')
 
-        an_energy = reference_energy
-        c = CrossSection(an_energy, 'He', 0, with_Q=False)
-        cross_section = c.calculate() / 1e-20
+        energy = reference_energy
+        c = CrossSection('He', 0, with_Q=False)
+        cross_section = c.calculate(energy) / 1e-20
 
         numpy.testing.assert_array_almost_equal(cross_section, reference_cross_section, decimal=3,
                                                 err_msg='Cross section test for helium (Q=1)')
