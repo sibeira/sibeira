@@ -47,8 +47,8 @@ class RateProfile(Rate):
 
     @staticmethod
     def get_spline(energy, cross_section):
-        f = scipy.interpolate.Akima1DInterpolator(numpy.log(energy), numpy.log(cross_section))
-        return lambda x: numpy.exp(f(numpy.log(x)))
+        f = scipy.interpolate.interp1d(numpy.log(energy), numpy.log(cross_section), kind='cubic', fill_value='extrapolate')
+        return lambda x: [0. if i == 0 else numpy.exp(f(numpy.log(i))) for i in x]
 
     def set_reference_energies(self, reference_energies):
         self.reference_energies = reference_energies
