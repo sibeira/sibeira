@@ -39,10 +39,9 @@ class Rate(Beam):
 
 
 class RateProfile(Rate):
-    reference_energies = [10, 20, 50, 100, 200, 500, 1000]
-
     def __init__(self, species, beam_energy, ionisation_level=0):
         super().__init__(species, beam_energy, ionisation_level)
+        self.reference_energies = [10, 20, 50, 100, 200, 500, 1000]
         self.nrl_spline = None
         self.beb_spline = None
 
@@ -50,6 +49,9 @@ class RateProfile(Rate):
     def get_spline(energy, cross_section):
         f = scipy.interpolate.Akima1DInterpolator(numpy.log(energy), numpy.log(cross_section))
         return lambda x: numpy.exp(f(numpy.log(x)))
+
+    def set_reference_energies(self, reference_energies):
+        self.reference_energies = reference_energies
 
     def set_nrl_profile(self, is_with_tabata=False, tabata_integration_dimension=2):
         reference_rates = numpy.empty_like(self.reference_energies)
