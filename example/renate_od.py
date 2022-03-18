@@ -4,7 +4,7 @@ import matplotlib.pyplot
 import numpy
 import scipy.integrate
 
-from rate import Rate
+from rate import RateProfile
 
 sys.path.append(os.environ['RENATE_OD'])
 
@@ -102,21 +102,13 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     temperatures = p.get_temperature()
     densities = p.get_density()
 
-    rate_beb = numpy.zeros_like(beamlet_geometry.rad)
-    rate_nrl = numpy.zeros_like(beamlet_geometry.rad)
-    rate_beb_tabata = numpy.zeros_like(beamlet_geometry.rad)
-    rate_nrl_tabata = numpy.zeros_like(beamlet_geometry.rad)
-
-    rate = Rate(species=species, beam_energy=float(energy) * 1000.0)
+    rate = RateProfile(species=species, beam_energy=float(energy) * 1000.0)
     v_beam = rate.get_speed()
 
-    for i in range(beamlet_geometry.rad.size):
-        print(i)
-        rate.set_profiles(electron_temperature=temperatures[i], electron_density=densities[i])
-        rate_beb[i] = rate.get_attenuation_beb() / v_beam
-        rate_nrl[i] = rate.get_attenuation_nrl() / v_beam
-        rate_beb_tabata[i] = rate.get_attenuation_beb(is_with_tabata=True, tabata_integration_dimension=dimension) / v_beam
-        rate_nrl_tabata[i] = rate.get_attenuation_nrl(is_with_tabata=True, tabata_integration_dimension=dimension) / v_beam
+    rate_beb = rate.get_beb_profile()(temperatures) * densities / v_beam
+    rate_nrl = rate.get_nrl_profile()(temperatures) * densities / v_beam
+    rate_beb_tabata = rate.get_beb_profile(True, 2)(temperatures) * densities / v_beam
+    rate_nrl_tabata = rate.get_nrl_profile(True, 2)(temperatures) * densities / v_beam
 
     relative_attenuation_from_beb = numpy.exp(
         scipy.integrate.cumulative_trapezoid(rate_beb, beamlet_geometry.rad, initial=0))
