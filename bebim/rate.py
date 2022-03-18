@@ -1,6 +1,6 @@
 import numpy
 from bebim.beam import Beam
-from bebim.cross_section import CrossSection
+from bebim.nrl import get_nrl_rate
 from bebim.integrator import RateIntegrator
 
 
@@ -17,9 +17,7 @@ class Rate(Beam):
     def get_attenuation_nrl(self, is_with_tabata=False, tabata_integration_dimension=2):
         if self.electron_density == 0:
             return 0.0
-        c = CrossSection(self.species, self.ionisation_level)
-        t = c.get_t(self.electron_temperature)
-        r = 1e-11 * numpy.sqrt(t) / c.B ** 1.5 / (6.0 + t) * numpy.exp(-1.0 / t)
+        r = get_nrl_rate(self.species, self.ionisation_level, self.electron_temperature)
         if is_with_tabata:
             r += RateIntegrator('charge exchange',
                                 self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
