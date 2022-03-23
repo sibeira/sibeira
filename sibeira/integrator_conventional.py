@@ -11,7 +11,7 @@ def maxwell(m, T, v):
     return numpy.sqrt((m__2kT / numpy.pi) ** 3) * numpy.exp(- m__2kT * v ** 2)
 
 
-class RateIntegratorExtra(RateIntegrator):
+class RateIntegratorConventional(RateIntegrator):
     def maxwell(self, velocity):
         return maxwell(self.target_mass, self.temperature, velocity)
 
