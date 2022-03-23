@@ -4,7 +4,7 @@ import scipy.integrate
 import scipy.stats
 
 from sibeira.beam import Beam
-from sibeira.cross_section import CrossSection
+from bebim.cross_section import CrossSection
 from tabata_ctf.cross_section import CrossSection as CXCrossSection
 
 
