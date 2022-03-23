@@ -4,7 +4,7 @@ import matplotlib.pyplot
 import numpy
 import scipy.integrate
 
-from rate import RateProfile
+from sibeira.rate_profile import RateProfile
 
 sys.path.append(os.environ['RENATE_OD'])
 

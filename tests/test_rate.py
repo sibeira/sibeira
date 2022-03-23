@@ -1,7 +1,10 @@
+import numpy
 import scipy.constants
 import unittest
-from sibeira.rate import *
+
+from sibeira.rate_profile import RateProfile
 from sibeira.integrator import RateIntegrator
+from sibeira.beam import Beam
 
 
 class TestRate(unittest.TestCase):
@@ -53,4 +56,3 @@ class TestRateProfileSpline(unittest.TestCase):
         r = RateProfile('Li', 40)
         s = r.get_spline([10, 20, 50, 100], [1, 3, 5, 10])
         numpy.testing.assert_array_almost_equal([1.2481484271391177], s([11.]), decimal=4, err_msg='spline test for 11')
-
