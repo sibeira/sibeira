@@ -1,6 +1,6 @@
 import numpy
 
-from sibeira.cross_section import CrossSection
+from bebim.cross_section import CrossSection
 
 
 def get_nrl_rate(species, ionisation_level, electron_temperature):

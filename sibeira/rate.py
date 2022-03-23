@@ -2,7 +2,7 @@ import numpy
 import scipy.interpolate
 
 from sibeira.beam import Beam
-from sibeira.nrl import get_nrl_rate
+from nrl.rate import get_nrl_rate
 from sibeira.integrator import RateIntegrator
 
 
