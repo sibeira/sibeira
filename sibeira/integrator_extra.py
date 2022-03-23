@@ -18,3 +18,13 @@ class RateIntegratorExtra(RateIntegrator):
     def integrand_1d(self, velocity):
         impact_energy = self.get_impact_energy(velocity)
         return self.maxwell(velocity) * velocity * self.cross_section(impact_energy)
+
+    def integrand_2d(self, alpha, v):
+        velocity = self.get_third_side_length(v, self.beam_speed, alpha)
+        impact_energy = self.get_impact_energy(velocity)
+        return self.maxwell(v) * velocity * self.cross_section(impact_energy)
+
+    def integrand_3d(self, beta, alpha, v):
+        velocity = self.get_third_side_length(v, self.beam_speed, alpha, beta)
+        impact_energy = self.get_impact_energy(velocity)
+        return self.maxwell(v) * velocity * self.cross_section(impact_energy)
