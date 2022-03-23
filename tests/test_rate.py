@@ -1,7 +1,7 @@
 import scipy.constants
 import unittest
-from bebim.rate import *
-from bebim.integrator import RateIntegrator
+from sibeira.rate import *
+from sibeira.integrator import RateIntegrator
 
 
 class TestRate(unittest.TestCase):
