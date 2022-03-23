@@ -24,8 +24,8 @@ class RateProfile(Rate):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
             print('NRL  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
-            self.set_profiles(self.reference_energies[i], 1)
-            reference_rates[i] = self.get_attenuation_nrl(is_with_tabata, tabata_integration_dimension)
+            self.set_profiles(self.reference_energies[i])
+            reference_rates[i] = self.get_full_rate_with_nrl(is_with_tabata, tabata_integration_dimension)
         print('NRL 100%')
         self.nrl_spline = self.get_spline(self.reference_energies, reference_rates)
 
@@ -37,8 +37,8 @@ class RateProfile(Rate):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
             print('BEB  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
-            self.set_profiles(self.reference_energies[i], 1)
-            reference_rates[i] = self.get_attenuation_beb(is_with_tabata, tabata_integration_dimension)
+            self.set_profiles(self.reference_energies[i])
+            reference_rates[i] = self.get_full_rate_with_beb(is_with_tabata, tabata_integration_dimension)
         print('BEB 100%')
         self.beb_spline = self.get_spline(self.reference_energies, reference_rates)
 
