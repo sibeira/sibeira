@@ -1,5 +1,6 @@
 import numpy
 import scipy.interpolate
+import scipy.integrate
 
 from sibeira.rate import Rate
 
@@ -44,3 +45,14 @@ class RateProfile(Rate):
     def get_beb_profile(self, is_with_tabata=False, tabata_integration_dimension=2):
         self.set_beb_profile(is_with_tabata, tabata_integration_dimension)
         return self.beb_spline
+
+    def get_attenuation(self, major_radius, temperatures, densities, profile_name,
+                        is_with_tabata=False, tabata_integration_dimension=2):
+        if profile_name == 'beb':
+            profile = self.get_beb_profile(is_with_tabata, tabata_integration_dimension)
+        elif profile_name == 'nrl':
+            profile = self.get_nrl_profile(is_with_tabata, tabata_integration_dimension)
+        else:
+            raise(ValueError('Invalid profile: ' + profile_name))
+        rate = profile(temperatures) * densities / self.get_speed()
+        return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, major_radius, initial=0))

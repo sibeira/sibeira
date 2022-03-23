@@ -103,21 +103,11 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     densities = p.get_density()
 
     rate = RateProfile(species=species, beam_energy=float(energy) * 1000.0)
-    v_beam = rate.get_speed()
 
-    rate_beb = rate.get_beb_profile()(temperatures) * densities / v_beam
-    rate_nrl = rate.get_nrl_profile()(temperatures) * densities / v_beam
-    rate_beb_tabata = rate.get_beb_profile(True, 2)(temperatures) * densities / v_beam
-    rate_nrl_tabata = rate.get_nrl_profile(True, 2)(temperatures) * densities / v_beam
-
-    relative_attenuation_from_beb = numpy.exp(
-        scipy.integrate.cumulative_trapezoid(rate_beb, beamlet_geometry.rad, initial=0))
-    relative_attenuation_from_nrl = numpy.exp(
-        scipy.integrate.cumulative_trapezoid(rate_nrl, beamlet_geometry.rad, initial=0))
-    relative_attenuation_from_beb_tabata = \
-        numpy.exp(scipy.integrate.cumulative_trapezoid(rate_beb_tabata, beamlet_geometry.rad, initial=0))
-    relative_attenuation_from_nrl_tabata = \
-        numpy.exp(scipy.integrate.cumulative_trapezoid(rate_nrl_tabata, beamlet_geometry.rad, initial=0))
+    relative_attenuation_from_beb = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb')
+    relative_attenuation_from_nrl = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl')
+    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', False, 2)
+    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', False, 2)
 
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              relative_attenuation_rod, relative_attenuation_rod_no_ion,
