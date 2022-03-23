@@ -18,6 +18,3 @@ class RateIntegratorExtra(RateIntegrator):
     def integrand_1d(self, velocity):
         impact_energy = self.get_impact_energy(velocity)
         return self.maxwell(velocity) * velocity * self.cross_section(impact_energy)
-
-    def integrand_normalisation_1d(self, velocity):
-        return self.maxwell(velocity)
