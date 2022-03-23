@@ -1,9 +1,9 @@
 import numpy
 import scipy.interpolate
 
-from bebim.beam import Beam
-from bebim.nrl import get_nrl_rate
-from bebim.integrator import RateIntegrator
+from sibeira.beam import Beam
+from sibeira.nrl import get_nrl_rate
+from sibeira.integrator import RateIntegrator
 
 
 class Rate(Beam):

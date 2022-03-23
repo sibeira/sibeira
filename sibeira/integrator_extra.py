@@ -3,7 +3,7 @@ import scipy.constants
 import scipy.integrate
 import scipy.stats
 
-from bebim.integrator import RateIntegrator
+from sibeira.integrator import RateIntegrator
 
 
 class RateIntegratorExtra(RateIntegrator):
