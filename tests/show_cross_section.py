@@ -1,6 +1,6 @@
 import numpy
 import matplotlib.pyplot
-from bebim.cross_section import CrossSection
+from sibeira.cross_section import CrossSection
 from tests.read_reference import read_reference
 
 

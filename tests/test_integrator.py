@@ -4,7 +4,7 @@ import numpy
 import scipy.constants
 
 from integrator import RateIntegrator
-from beam import Beam
+from sibeira.beam import Beam
 
 
 class TestIntegrator(unittest.TestCase):

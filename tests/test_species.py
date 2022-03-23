@@ -1,4 +1,4 @@
-from bebim.species import *
+from sibeira.species import *
 import unittest
 
 
