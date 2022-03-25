@@ -2,14 +2,13 @@ import sys
 import os
 import matplotlib.pyplot
 import numpy
-import scipy.integrate
 
 from sibeira.rate_profile import RateProfile
 
 sys.path.append(os.environ['RENATE_OD'])
 
 from manager import RenateODManager
-from beamlet import set_beamlet, BeamletGeometry
+from beamlet import set_beamlet
 from profiles import Profiles
 from utils import *
 
@@ -20,14 +19,6 @@ def get_export_name(mode, shot_number, time, species, energy, dimension=2, scena
            get_scenario_path(scenario) + \
            ('' if mode == 'plot' else '_' + mode) + \
            ('_3d' if dimension == 3 else '')
-
-
-def test_export_name():
-    print(get_export_name('plot', 12345, 678, 'test', 123))
-    print(get_export_name('log', 12345, 678, 'test', 123))
-    print(get_export_name('lorem_ipsum', 12345, 678, 'test', 123))
-    print(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3))
-    print(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3, 'electron'))
 
 
 def get_title_name(shot_number, time, species, energy, scenario='total'):
@@ -55,20 +46,6 @@ def get_scenario_path(scenario):
         return ', $n_e = 0$'
     else:
         raise (ValueError('Invalid scenario: ' + scenario))
-
-
-def test_scenario_latex():
-    print(get_scenario_latex('total'))
-    print(get_scenario_latex('just electron'))
-    print(get_scenario_latex('just ion'))
-    print(get_scenario_latex('lorem ipsum'))
-
-
-def test_scenario_path():
-    print(get_scenario_latex('total'))
-    print(get_scenario_latex('just electron'))
-    print(get_scenario_latex('just ion'))
-    print(get_scenario_latex('lorem ipsum'))
 
 
 def plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinate,
@@ -102,14 +79,6 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
     matplotlib.pyplot.savefig(export_name + '.png')
     matplotlib.pyplot.savefig(export_name + '.pdf')
     matplotlib.pyplot.show()
-
-
-def test_plot_attenuation_profile():
-    r = numpy.linspace(0.6, 0.74, 11)
-    p1 = numpy.random.random_sample(r.shape)
-    p2 = numpy.random.random_sample(r.shape)
-    p3 = numpy.random.random_sample(r.shape)
-    plot_attenuation_profile(12345, 678, 'test', 123, 3, r, [p1, p2, p3], ['p1', 'p2', 'p3'])
 
 
 def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
