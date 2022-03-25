@@ -1,5 +1,6 @@
 import numpy
 import scipy.interpolate
+import scipy.integrate
 
 from sibeira.rate import Rate
 
@@ -23,8 +24,8 @@ class RateProfile(Rate):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
             print('NRL  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
-            self.set_profiles(self.reference_energies[i], 1)
-            reference_rates[i] = self.get_attenuation_nrl(is_with_tabata, tabata_integration_dimension)
+            self.set_profiles(self.reference_energies[i])
+            reference_rates[i] = self.get_full_rate_with_nrl(is_with_tabata, tabata_integration_dimension)
         print('NRL 100%')
         self.nrl_spline = self.get_spline(self.reference_energies, reference_rates)
 
@@ -36,11 +37,22 @@ class RateProfile(Rate):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
             print('BEB  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
-            self.set_profiles(self.reference_energies[i], 1)
-            reference_rates[i] = self.get_attenuation_beb(is_with_tabata, tabata_integration_dimension)
+            self.set_profiles(self.reference_energies[i])
+            reference_rates[i] = self.get_full_rate_with_beb(is_with_tabata, tabata_integration_dimension)
         print('BEB 100%')
         self.beb_spline = self.get_spline(self.reference_energies, reference_rates)
 
     def get_beb_profile(self, is_with_tabata=False, tabata_integration_dimension=2):
         self.set_beb_profile(is_with_tabata, tabata_integration_dimension)
         return self.beb_spline
+
+    def get_attenuation(self, radial_coordinates, temperatures, densities, profile_name,
+                        is_with_tabata=False, tabata_integration_dimension=2):
+        if profile_name == 'beb':
+            profile = self.get_beb_profile(is_with_tabata, tabata_integration_dimension)
+        elif profile_name == 'nrl':
+            profile = self.get_nrl_profile(is_with_tabata, tabata_integration_dimension)
+        else:
+            raise(ValueError('Invalid profile: ' + profile_name))
+        rate = profile(temperatures) * densities / self.get_speed()
+        return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
