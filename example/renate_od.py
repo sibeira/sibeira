@@ -14,10 +14,12 @@ from profiles import Profiles
 from utils import *
 
 
-def get_export_name(mode, shot_number, time, species, energy, dimension=2):
+def get_export_name(mode, shot_number, time, species, energy, dimension=2, scenario='total'):
     directory_path = os.path.dirname(os.path.abspath(__file__))
     return directory_path + '/figs/' + species + '_' + str(energy) + 'keV_' + str(shot_number) + '_' + str(time) + \
-           ('' if mode == 'plot' else '_' + mode) + ('_3d' if dimension == 3 else '')
+           ('' if scenario == 'total' else '_' + mode) + \
+           ('' if mode == 'plot' else '_' + mode) + \
+           ('_3d' if dimension == 3 else '')
 
 
 def test_export_name():
@@ -25,6 +27,7 @@ def test_export_name():
     print(get_export_name('log', 12345, 678, 'test', 123))
     print(get_export_name('lorem_ipsum', 12345, 678, 'test', 123))
     print(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3))
+    print(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3, 'electron'))
 
 
 def plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinate,
@@ -34,14 +37,14 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
                              relative_attenuation_from_nrl,
                              relative_attenuation_from_beb_tabata,
                              relative_attenuation_from_nrl_tabata,
-                             mode='plot'):
+                             mode='plot', scenario='total'):
     fig, ax = matplotlib.pyplot.subplots()
     fig.set_size_inches(6, 2)
     if mode == 'log':
         plot = getattr(ax, 'semilogy')
     else:
         plot = getattr(ax, mode)
-    export_name = get_export_name(mode, shot_number, time, species, energy, dimension)
+    export_name = get_export_name(mode, shot_number, time, species, energy, dimension, scenario)
 
     plot(radial_coordinate, relative_attenuation_from_renate_od,
          '-', linewidth=2, color='tab:blue', label='RENATE-OD')
