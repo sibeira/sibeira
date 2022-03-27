@@ -44,7 +44,7 @@ class TestRenateODTitleName(unittest.TestCase):
         self.assertEqual(reference, get_title_name(12345, 678, 'test', 123, 'just electron'), 'Test other plot path')
 
     def test_invalid(self):
-        self.assertRaises(ValueError, get_title_name, 12345, 678, 'test', 123, 'invalid', 'Scenario LaTeX test invalid case')
+        self.assertRaises(ValueError, get_title_name, 12345, 678, 'test', 123, 'invalid')
 
 
 class TestRenateODScenarioLatex(unittest.TestCase):
