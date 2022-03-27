@@ -13,11 +13,20 @@ class TestRenateODExportName(unittest.TestCase):
 
 
 class TestRenateODScenarioLatex(unittest.TestCase):
-    def test_scenario_latex(self):
-        print(get_scenario_latex('total'))
-        print(get_scenario_latex('just electron'))
-        print(get_scenario_latex('just ion'))
-        self.assertRaises(ValueError, get_scenario_latex, 'fake scenario')
+    def test_total(self):
+        reference = ''
+        self.assertEqual(get_scenario_path('total'), reference, 'Scenario LaTeX test for combnined models')
+
+    def test_just_electron(self):
+        reference = ''
+        self.assertEqual(get_scenario_path('just electron'), reference, 'Scenario LaTeX test for pure electron models')
+
+    def test_just_ion(self):
+        reference = ''
+        self.assertEqual(get_scenario_path('just electron'), reference, 'Scenario LaTeX test for pure ion models')
+
+    def test_invalid(self):
+        self.assertRaises(ValueError, get_scenario_path, 'Scenario LaTeX test invalid case')
 
 
 class TestRenateODScenarioPath(unittest.TestCase):
@@ -34,7 +43,7 @@ class TestRenateODScenarioPath(unittest.TestCase):
         self.assertEqual(get_scenario_path('just electron'), reference, 'Scenario path test for pure ion models')
 
     def test_invalid(self):
-        self.assertRaises(ValueError, get_scenario_path, 'fake scenario')
+        self.assertRaises(ValueError, get_scenario_path, 'Scenario path test invalid case')
 
 
 if __name__ == '__main__':
