@@ -13,7 +13,7 @@ def get_export_name(mode, shot_number, time, species, energy, dimension=2, scena
 
 
 def get_title_name(shot_number, time, species, energy, scenario='total'):
-    return 'COMPASS #' + str(shot_number) + ' (' + str(time) + ' ms, ' + species + ', ' + str(energy) + ' keV ' + \
+    return 'COMPASS #' + str(shot_number) + ' (' + str(time) + ' ms, ' + species + ', ' + str(energy) + ' keV' + \
         get_scenario_latex(scenario) + ')'
 
 
