@@ -49,7 +49,7 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
     else:
         plot = getattr(ax, mode)
     export_name = get_export_name(mode, shot_number, time, species, energy, dimension, scenario)
-    title_name = get_title_name(shot_number, time, species, energy)
+    title_name = get_title_name(shot_number, time, species, energy, scenario)
     plot(radial_coordinate, relative_attenuation_profiles[0],
          linewidth=2, label=profile_names[0])
 

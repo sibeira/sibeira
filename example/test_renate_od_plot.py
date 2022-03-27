@@ -11,7 +11,7 @@ class TestRenateODPlot(unittest.TestCase):
         p1 = numpy.random.random_sample(r.shape)
         p2 = numpy.random.random_sample(r.shape)
         p3 = numpy.random.random_sample(r.shape)
-        plot_attenuation_profile(12345, 678, 'test', 123, 3, r, [p1, p2, p3], ['p1', 'p2', 'p3'])
+        plot_attenuation_profile(12345, 678, 'test', 123, 3, r, [p1, p2, p3], ['p1', 'p2', 'p3'], scenario='just ion')
 
 
 if __name__ == '__main__':
