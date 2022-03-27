@@ -32,9 +32,9 @@ def get_scenario_path(scenario):
     if scenario == 'total':
         return ''
     elif scenario == 'just electron':
-        return ', $n_i = 0$'
+        return '_electron'
     elif scenario == 'just ion':
-        return ', $n_e = 0$'
+        return '_ion'
     else:
         raise (ValueError('Invalid scenario: ' + scenario))
 
