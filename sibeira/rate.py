@@ -29,3 +29,8 @@ class Rate(Beam):
                                 self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
                 .get_coefficient()
         return r
+
+    def get_full_rate_with_tabata(self, tabata_integration_dimension=2):
+        return RateIntegrator('charge exchange',
+                              self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
+            .get_coefficient()
