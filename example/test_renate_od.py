@@ -1,7 +1,7 @@
 import unittest
 import os.path
 
-from renate_od import get_export_name, get_scenario_latex, get_scenario_path
+from example.renate_od import get_export_name, get_scenario_latex, get_scenario_path
 
 
 class TestRenateODExportName(unittest.TestCase):

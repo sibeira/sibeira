@@ -2,7 +2,7 @@ import unittest
 
 import numpy
 
-from renate_od import plot_attenuation_profile
+from example.renate_od import plot_attenuation_profile
 
 
 class TestRenateODPlot(unittest.TestCase):
