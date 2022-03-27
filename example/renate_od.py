@@ -3,15 +3,6 @@ import os
 import matplotlib.pyplot
 import numpy
 
-from sibeira.rate_profile import RateProfile
-
-sys.path.append(os.environ['RENATE_OD'])
-
-from manager import RenateODManager
-from beamlet import set_beamlet
-from profiles import Profiles
-from utils import *
-
 
 def get_export_name(mode, shot_number, time, species, energy, dimension=2, scenario='total'):
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -82,6 +73,15 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
 
 
 def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
+    from sibeira.rate_profile import RateProfile
+
+    sys.path.append(os.environ['RENATE_OD'])
+
+    from manager import RenateODManager
+    from beamlet import set_beamlet
+    from profiles import Profiles
+    #from utils import *
+
     z = 0
     tor = 0
     beamlet_geometry = set_beamlet(z, tor)
