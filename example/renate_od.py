@@ -145,9 +145,9 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
 if __name__ == "__main__":
 #    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='40', dimension=3)
 #    run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='80', dimension=3)
-#    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='40')
-#    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='60')
-#    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='80')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='40')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='60')
+    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='80')
     run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='40')
     run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='60')
     run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='80')
