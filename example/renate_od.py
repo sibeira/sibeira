@@ -31,9 +31,9 @@ def get_scenario_latex(scenario):
 def get_scenario_path(scenario):
     if scenario == 'total':
         return ''
-    elif scenario == '_electron':
+    elif scenario == 'just electron':
         return ', $n_i = 0$'
-    elif scenario == '_ion':
+    elif scenario == 'just ion':
         return ', $n_e = 0$'
     else:
         raise (ValueError('Invalid scenario: ' + scenario))
