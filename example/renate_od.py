@@ -13,7 +13,7 @@ def get_export_name(mode, shot_number, time, species, energy, dimension=2, scena
 
 
 def get_title_name(shot_number, time, species, energy, scenario='total'):
-    return 'COMPASS #' + str(shot_number) + ' (' + str(time) + ' ms, ' + species + ', ' + str(energy) + ' keV ' + \
+    return 'COMPASS #' + str(shot_number) + ' (' + str(time) + ' ms, ' + species + ', ' + str(energy) + ' keV' + \
         get_scenario_latex(scenario) + ')'
 
 
@@ -126,11 +126,11 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod,
                               relative_attenuation_from_beb_tabata, relative_attenuation_from_nrl_tabata],
-                             ['RENATE-OD', 'BEB + Tabata', 'NRL + Tabata'], scenario='just electron')
+                             ['RENATE-OD', 'BEB', 'NRL'], scenario='just electron')
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod_just_electron,
                               relative_attenuation_from_beb, relative_attenuation_from_nrl],
-                             ['RENATE-OD', 'BEB + Tabata', 'NRL + Tabata'], mode='log', scenario='just electron')
+                             ['RENATE-OD', 'BEB', 'NRL'], mode='log', scenario='just electron')
 
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod_just_ion,
