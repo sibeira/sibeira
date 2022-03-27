@@ -71,13 +71,15 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
     matplotlib.pyplot.savefig(export_name + '.pdf')
     matplotlib.pyplot.show()
 
-def get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, species, energy, scenario='default')
+
+def get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, species, energy, scenario='default'):
     sys.path.append(os.environ['RENATE_OD'])
     from manager import RenateODManager
 
     r = RenateODManager(beamlet_geometry, shot_number, time, species, energy, 'just electron')
     radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
     return radial_coordinates, relative_attenuation_rod.fillna(0)
+
 
 def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     from sibeira.rate_profile import RateProfile
