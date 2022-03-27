@@ -49,7 +49,7 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
     else:
         plot = getattr(ax, mode)
     export_name = get_export_name(mode, shot_number, time, species, energy, dimension, scenario)
-    title_name = get_title_name(shot_number, time, species, energy)
+    title_name = get_title_name(shot_number, time, species, energy, scenario)
     plot(radial_coordinate, relative_attenuation_profiles[0],
          linewidth=2, label=profile_names[0])
 
@@ -125,7 +125,7 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
 
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod,
-                              relative_attenuation_from_beb_tabata, relative_attenuation_from_nrl_tabata],
+                              relative_attenuation_from_beb, relative_attenuation_from_nrl],
                              ['RENATE-OD', 'BEB', 'NRL'], scenario='just electron')
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod_just_electron,
