@@ -33,15 +33,15 @@ class TestRenateODExportName(unittest.TestCase):
 class TestRenateODTitleName(unittest.TestCase):
     def test_default(self):
         reference = 'COMPASS #12345 (678 ms, test, 123 keV)'
-        self.assertEqual(get_title_name(12345, 678, 'test', 123), reference, 'Test linear plot path')
+        self.assertEqual(reference, get_title_name(12345, 678, 'test', 123), 'Test linear plot path')
 
     def test_just_ion(self):
-        reference = 'COMPASS #12345 (678 ms, test, 123 keV, $n_e = 0 $)'
-        self.assertEqual(get_title_name(12345, 678, 'test', 123, 'just ion'), reference, 'Test logarithmic plot path')
+        reference = 'COMPASS #12345 (678 ms, test, 123 keV, $n_e = 0$)'
+        self.assertEqual(reference, get_title_name(12345, 678, 'test', 123, 'just ion'), 'Test logarithmic plot path')
 
     def test_just_electron(self):
-        reference = 'COMPASS #12345 (678 ms, test, 123 keV, $n_i = 0 $)'
-        self.assertEqual(get_title_name(12345, 678, 'test', 123, 'just electron'), reference, 'Test other plot path')
+        reference = 'COMPASS #12345 (678 ms, test, 123 keV, $n_i = 0$)'
+        self.assertEqual(reference, get_title_name(12345, 678, 'test', 123, 'just electron'), 'Test other plot path')
 
     def test_invalid(self):
         self.assertRaises(ValueError, get_title_name, 12345, 678, 'test', 123, 'invalid', 'Scenario LaTeX test invalid case')
