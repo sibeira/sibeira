@@ -1,15 +1,33 @@
 import unittest
+import os.path
 
 from renate_od import get_export_name, get_scenario_latex, get_scenario_path
 
 
 class TestRenateODExportName(unittest.TestCase):
-    def test_export_name(self):
-        print(get_export_name('plot', 12345, 678, 'test', 123))
-#        print(get_export_name('log', 12345, 678, 'test', 123))
-#        print(get_export_name('lorem_ipsum', 12345, 678, 'test', 123))
-#        print(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3))
-#        print(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3, 'just electron'))
+    directory_path = os.path.dirname(os.path.abspath(__file__)) + '/figs/'
+
+    def test_linear_plot(self):
+        reference = self.directory_path + 'test_123keV_12345_678'
+        self.assertEqual(get_export_name('plot', 12345, 678, 'test', 123), reference, 'Test linear plot path')
+
+    def test_logarithmic_plot(self):
+        reference = self.directory_path + 'test_123keV_12345_678_log'
+        self.assertEqual(get_export_name('log', 12345, 678, 'test', 123), reference, 'Test logarithmic plot path')
+
+    def test_other_plot(self):
+        reference = self.directory_path + 'test_123keV_12345_678_lorem_ipsum'
+        self.assertEqual(get_export_name('lorem_ipsum', 12345, 678, 'test', 123), reference, 'Test other plot path')
+
+    def test_3d_integration_plot(self):
+        reference = self.directory_path + 'test_123keV_12345_678_dolor_sit_amet_3d'
+        self.assertEqual(get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3), reference,
+                         'Test 3D integration plot path')
+
+    def test_3d_integration_plot_with_pure_electron_case(self):
+        reference = self.directory_path + 'test_123keV_12345_678_electron_log_3d'
+        self.assertEqual(get_export_name('log', 12345, 678, 'test', 123, 3, 'just electron'), reference,
+                         'Test pure electron case path with 3D integration with logarithmic plot')
 
 
 class TestRenateODScenarioLatex(unittest.TestCase):
