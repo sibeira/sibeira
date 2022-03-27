@@ -72,12 +72,19 @@ def plot_attenuation_profile(shot_number, time, species, energy, dimension, radi
     matplotlib.pyplot.show()
 
 
+def get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, species, energy, scenario='default'):
+    sys.path.append(os.environ['RENATE_OD'])
+    from manager import RenateODManager
+
+    r = RenateODManager(beamlet_geometry, shot_number, time, species, energy, 'just electron')
+    radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
+    return radial_coordinates, relative_attenuation_rod.fillna(0)
+
+
 def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     from sibeira.rate_profile import RateProfile
 
     sys.path.append(os.environ['RENATE_OD'])
-
-    from manager import RenateODManager
     from beamlet import set_beamlet
     from profiles import Profiles
     #from utils import *
@@ -86,13 +93,12 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     tor = 0
     beamlet_geometry = set_beamlet(z, tor)
 
-    r = RenateODManager(beamlet_geometry, shot_number, time, species, energy, 'just electron')
-    radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
-    relative_attenuation_rod_just_electron = relative_attenuation_rod.fillna(0)
-
-    r = RenateODManager(beamlet_geometry, shot_number, time, species, energy)
-    radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
-    relative_attenuation_rod = relative_attenuation_rod.fillna(0)
+    radial_coordinates, relative_attenuation_rod_just_electron = \
+        get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, species, energy, 'just electron')
+    radial_coordinates, relative_attenuation_rod_just_ion = \
+        get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, species, energy, 'just ion')
+    radial_coordinates, relative_attenuation_rod =\
+        get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, species, energy)
 
     p = Profiles(is_export=False)
     if not numpy.array_equal(radial_coordinates.to_numpy, beamlet_geometry.rad):
@@ -104,8 +110,9 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
 
     relative_attenuation_from_beb = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb')
     relative_attenuation_from_nrl = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl')
-    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', False, 2)
-    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', False, 2)
+    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', True, 2)
+    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', True, 2)
+    relative_attenuation_from_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'tabata', True, 2)
 
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod,
@@ -124,6 +131,15 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
                              [relative_attenuation_rod_just_electron,
                               relative_attenuation_from_beb, relative_attenuation_from_nrl],
                              ['RENATE-OD', 'BEB + Tabata', 'NRL + Tabata'], mode='log', scenario='just electron')
+
+    plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
+                             [relative_attenuation_rod_just_ion,
+                              relative_attenuation_from_tabata],
+                             ['RENATE-OD', 'Tabata'], scenario='just ion')
+    plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
+                             [relative_attenuation_rod_just_ion,
+                              relative_attenuation_from_tabata],
+                             ['RENATE-OD', 'Tabata'], mode='log', scenario='just ion')
 
 
 if __name__ == "__main__":
