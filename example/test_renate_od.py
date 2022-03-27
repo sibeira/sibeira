@@ -1,7 +1,7 @@
 import unittest
 import os.path
 
-from example.renate_od import get_export_name, get_scenario_latex, get_scenario_path
+from example.renate_od import get_export_name, get_title_name, get_scenario_latex, get_scenario_path
 
 
 class TestRenateODExportName(unittest.TestCase):
@@ -28,6 +28,23 @@ class TestRenateODExportName(unittest.TestCase):
         reference = self.directory_path + 'test_123keV_12345_678_electron_log_3d'
         self.assertEqual(get_export_name('log', 12345, 678, 'test', 123, 3, 'just electron'), reference,
                          'Test pure electron case path with 3D integration with logarithmic plot')
+
+
+class TestRenateODTitleName(unittest.TestCase):
+    def test_default(self):
+        reference = 'COMPASS #12345 (678 ms, test, 123 keV)'
+        self.assertEqual(get_title_name(12345, 678, 'test', 123), reference, 'Test linear plot path')
+
+    def test_just_ion(self):
+        reference = 'COMPASS #12345 (678 ms, test, 123 keV, $n_e = 0 $)'
+        self.assertEqual(get_title_name(12345, 678, 'test', 123, 'just ion'), reference, 'Test logarithmic plot path')
+
+    def test_just_electron(self):
+        reference = 'COMPASS #12345 (678 ms, test, 123 keV, $n_i = 0 $)'
+        self.assertEqual(get_title_name(12345, 678, 'test', 123, 'just electron'), reference, 'Test other plot path')
+
+    def test_invalid(self):
+        self.assertRaises(ValueError, get_title_name, 12345, 678, 'test', 123, 'invalid', 'Scenario LaTeX test invalid case')
 
 
 class TestRenateODScenarioLatex(unittest.TestCase):
