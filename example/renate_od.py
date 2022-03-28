@@ -76,7 +76,7 @@ def get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, speci
     sys.path.append(os.environ['RENATE_OD'])
     from manager import RenateODManager
 
-    r = RenateODManager(beamlet_geometry, shot_number, time, species, energy, 'just electron')
+    r = RenateODManager(beamlet_geometry, shot_number, time, species, energy, scenario)
     radial_coordinates, relative_attenuation_rod = r.get_attenuation_profile()
     return radial_coordinates, relative_attenuation_rod.fillna(0)
 
@@ -87,7 +87,6 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
     sys.path.append(os.environ['RENATE_OD'])
     from beamlet import set_beamlet
     from profiles import Profiles
-    #from utils import *
 
     z = 0
     tor = 0
@@ -143,8 +142,6 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
 
 
 if __name__ == "__main__":
-#    run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='40', dimension=3)
-#    run_attenuation_comparison(shot_number='17178', time='1097', species='Na', energy='80', dimension=3)
     run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='40')
     run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='60')
     run_attenuation_comparison(shot_number='17178', time='1097', species='Li', energy='80')
