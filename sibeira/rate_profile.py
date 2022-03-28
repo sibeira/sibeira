@@ -70,5 +70,5 @@ class RateProfile(Rate):
             profile = self.get_tabata_profile(tabata_integration_dimension)
         else:
             raise(ValueError('Invalid profile: ' + profile_name))
-        rate = profile(temperatures) * densities / self.get_speed()
+        rate = profile(temperatures) * densities / self.speed
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
