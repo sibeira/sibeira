@@ -1,0 +1,3 @@
+[submodule "example/figures"]
+	path = example/figures
+	url = git@github.com:sibeira/figures.git

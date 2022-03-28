@@ -6,7 +6,7 @@ import numpy
 
 def get_export_name(mode, shot_number, time, species, energy, dimension=2, scenario='total'):
     directory_path = os.path.dirname(os.path.abspath(__file__))
-    return directory_path + '/figs/' + species + '_' + str(energy) + 'keV_' + str(shot_number) + '_' + str(time) + \
+    return directory_path + '/figures/' + species + '_' + str(energy) + 'keV_' + str(shot_number) + '_' + str(time) + \
            get_scenario_path(scenario) + \
            ('' if mode == 'plot' else '_' + mode) + \
            ('_3d' if dimension == 3 else '')
