@@ -5,7 +5,7 @@ from example.renate_od import get_export_name, get_title_name, get_scenario_late
 
 
 class TestRenateODExportName(unittest.TestCase):
-    directory_path = os.path.dirname(os.path.abspath(__file__)) + '/figs/'
+    directory_path = os.path.dirname(os.path.abspath(__file__)) + '/figures/'
 
     def test_linear_plot(self):
         reference = self.directory_path + 'test_123keV_12345_678'
