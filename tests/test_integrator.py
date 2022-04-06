@@ -19,8 +19,12 @@ class TestIntegrator(unittest.TestCase):
         numpy.testing.assert_array_almost_equal(r.get_target_mass(), plasma_ion_mass,
                                                 err_msg='Wrong target mass for charge exchange reaction')
 
+    def test_target_reaction_invalid(self):
+        self.assertRaises(ValueError, RateIntegrator, 'unknown reaction', 'Li', 0, 0)
+
     def test_target_mass_invalid(self):
         self.assertRaises(ValueError, RateIntegrator, 'charge exchange', 'unknown species', 0, 0)
+
 
     def test_normalisation_1d(self):
         rate = RateIntegrator('electron impact ionisation', 'Li', 40, 100, 1)
