@@ -109,9 +109,9 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
 
     relative_attenuation_from_beb = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb')
     relative_attenuation_from_nrl = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl')
-    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', True, 2)
-    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', True, 2)
-    relative_attenuation_from_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'tabata', True, 2)
+    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', 2)
+    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', 2)
+    relative_attenuation_from_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'tabata', 2)
 
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod,

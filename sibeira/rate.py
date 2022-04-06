@@ -13,18 +13,18 @@ class Rate(Beam):
         if ~numpy.isnan(electron_temperature):
             self.electron_temperature = electron_temperature
 
-    def get_full_rate_with_nrl(self, is_with_tabata=False, tabata_integration_dimension=2):
+    def get_full_rate_with_nrl(self, tabata_integration_dimension=-1):
         r = get_nrl_rate(self.species, self.ionisation_level, self.electron_temperature)
-        if is_with_tabata:
+        if tabata_integration_dimension >= 0:
             r += RateIntegrator('charge exchange',
                                 self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
                 .get_coefficient()
         return r
 
-    def get_full_rate_with_beb(self, is_with_tabata=False, tabata_integration_dimension=2):
+    def get_full_rate_with_beb(self, tabata_integration_dimension=-1):
         r = RateIntegrator('electron impact ionisation', self.species, self.beam_energy, self.electron_temperature, 1)\
             .get_coefficient()
-        if is_with_tabata:
+        if tabata_integration_dimension >= 0:
             r += RateIntegrator('charge exchange',
                                 self.species, self.beam_energy, self.electron_temperature, tabata_integration_dimension)\
                 .get_coefficient()
