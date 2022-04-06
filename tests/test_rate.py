@@ -21,24 +21,6 @@ class TestRate(unittest.TestCase):
     def get_deuterium_mass():
         return Beam('D', 0).get_mass()
 
-    def test_normalisation_1d(self):
-        rate = RateIntegrator('electron impact ionisation', 'Li', 40, 100, 1)
-        normalisation_factor = rate.integrate(rate.integrand_normalisation)
-        numpy.testing.assert_array_almost_equal(normalisation_factor, 1, decimal=4,
-                                                err_msg='1D normalisation factor')
-
-    def test_normalisation_2d(self):
-        rate = RateIntegrator('charge exchange', 'Li', 40, 100, 2)
-        normalisation_factor = rate.integrate(rate.integrand_normalisation)
-        numpy.testing.assert_array_almost_equal(normalisation_factor, 2.0*scipy.constants.pi, decimal=4,
-                                                err_msg='2D normalisation factor')
-
-    def test_normalisation_3d(self):
-        rate = RateIntegrator('charge exchange', 'Li', 40, 100, 3)
-        normalisation_factor = rate.integrate(rate.integrand_normalisation)
-        numpy.testing.assert_array_almost_equal(normalisation_factor, 2.0*scipy.constants.pi**2, decimal=4,
-                                                err_msg='3D normalisation factor')
-
 
 class TestRateProfileSpline(unittest.TestCase):
 
