@@ -20,7 +20,7 @@ class TestIntegrator(unittest.TestCase):
                                                 err_msg='Wrong target mass for charge exchange reaction')
 
     def test_target_mass_invalid(self):
-        self.assertRaises(ValueError, RateIntegrator, 'unknown species', 0, 0)
+        self.assertRaises(ValueError, RateIntegrator, 'charge exchange', 'unknown species', 0, 0)
 
     def test_normalisation_1d(self):
         rate = RateIntegrator('electron impact ionisation', 'Li', 40, 100, 1)
