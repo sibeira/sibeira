@@ -25,7 +25,6 @@ class TestIntegrator(unittest.TestCase):
     def test_target_mass_invalid(self):
         self.assertRaises(ValueError, RateIntegrator, 'charge exchange', 'unknown species', 0, 0)
 
-
     def test_normalisation_1d(self):
         rate = RateIntegrator('electron impact ionisation', 'Li', 40, 100, 1)
         normalisation_factor = rate.integrate(rate.integrand_normalisation)
