@@ -28,5 +28,7 @@ jobs:
           python -m unittest -v tests.test_species
           python -m unittest -v tests.test_cross_section
           python -m unittest -v tests.test_tabata
+          python -m unittest -v tests.test_integrator
           python -m unittest -v tests.test_rate
+          python -m unittest -v tests.test_rate_profile
           python -m unittest -v example.test_renate_od
