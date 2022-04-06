@@ -9,13 +9,13 @@ from sibeira.beam import Beam
 
 class TestIntegrator(unittest.TestCase):
     def test_target_mass_electron_impact_ionisation(self):
-        r = RateIntegrator('electron impact ionisation', 0, 0)
+        r = RateIntegrator('electron impact ionisation', 'Li', 0, 0)
         numpy.testing.assert_array_almost_equal(r.get_target_mass(), scipy.constants.electron_mass,
                                                 err_msg='Wrong target mass for electron impact ionisation')
 
     def test_target_mass_charge_exchange(self):
         plasma_ion_mass = Beam('D', 0).get_mass()
-        r = RateIntegrator('charge exchange', 0, 0)
+        r = RateIntegrator('charge exchange', 'Li', 0, 0)
         numpy.testing.assert_array_almost_equal(r.get_target_mass(), plasma_ion_mass,
                                                 err_msg='Wrong target mass for charge exchange reaction')
 
