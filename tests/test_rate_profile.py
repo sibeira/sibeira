@@ -21,3 +21,13 @@ class TestRateProfileSpline(unittest.TestCase):
         r = RateProfile('Li', 40)
         s = r.get_spline([10, 20, 50, 100], [1, 3, 5, 10])
         numpy.testing.assert_array_almost_equal([1.2481484271391177], s([11.]), decimal=4, err_msg='spline test for 11')
+
+
+class TestRateProfileIO(unittest.TestCase):
+    def test_import_profile_not_exist(self):
+        r = RateProfile('Li', 40)
+        self.assertRaises(ValueError, r.import_profile, 'invalid profile', 0)
+
+
+if __name__ == '__main__':
+    unittest.main()

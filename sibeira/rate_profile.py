@@ -63,13 +63,25 @@ class RateProfile(Rate):
 
     def get_attenuation(self, radial_coordinates, temperatures, densities, profile_name,
                         tabata_integration_dimension=-1):
-        if profile_name == 'beb':
-            profile = self.get_beb_profile(tabata_integration_dimension)
-        elif profile_name == 'nrl':
-            profile = self.get_nrl_profile(tabata_integration_dimension)
-        elif profile_name == 'tabata':
-            profile = self.get_tabata_profile(tabata_integration_dimension)
-        else:
-            raise(ValueError('Invalid profile: ' + profile_name))
+        try:
+            profile = self.import_profile(profile_name, tabata_integration_dimension)
+        except ValueError:
+            if profile_name == 'beb':
+                profile = self.get_beb_profile(tabata_integration_dimension)
+            elif profile_name == 'nrl':
+                profile = self.get_nrl_profile(tabata_integration_dimension)
+            elif profile_name == 'tabata':
+                profile = self.get_tabata_profile(tabata_integration_dimension)
+            else:
+                raise(ValueError('Invalid profile: ' + profile_name))
+            self.export_profile(profile_name, tabata_integration_dimension, profile)
         rate = profile(temperatures) * densities / self.speed
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
+
+    def import_profile(self, profile_name, tabata_integration_dimension):
+        raise(ValueError('The profile is not found: ' + profile_name +
+                         ' (T ' + str(tabata_integration_dimension) + ')'))
+        return profile
+
+    def export_profile(self, profile_name, tabata_integration_dimension, profile):
+        pass
