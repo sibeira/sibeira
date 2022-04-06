@@ -18,3 +18,8 @@ class TestRate(unittest.TestCase):
     @staticmethod
     def get_deuterium_mass():
         return Beam('D', 0).get_mass()
+
+
+if __name__ == '__main__':
+    unittest.main()
+
