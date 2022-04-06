@@ -1,6 +1,6 @@
 import numpy
 import unittest
-from bebim.beam import Beam
+from sibeira.beam import Beam
 
 
 class TestBeam(unittest.TestCase):

@@ -21,8 +21,14 @@ class CrossSection:
 
     def get_f(self, E1):
         ER = 25.00
+        if self.tabata_data['a3'].to_numpy() == numpy.inf:
+            return self.tabata_data['a1'].to_numpy() * (E1 / ER) ** self.tabata_data['a2'].to_numpy() / \
+                   (1.0 +
+                    (E1 / self.tabata_data['a5'].to_numpy()) **
+                    (self.tabata_data['a2'].to_numpy() + self.tabata_data['a6'].to_numpy()))
         return self.tabata_data['a1'].to_numpy() * (E1 / ER) ** self.tabata_data['a2'].to_numpy() / \
-               (1.0 + (E1 / self.tabata_data['a3'].to_numpy()) **
+               (1.0 +
+                (E1 / self.tabata_data['a3'].to_numpy()) **
                 (self.tabata_data['a2'].to_numpy() + self.tabata_data['a4'].to_numpy()) +
                 (E1 / self.tabata_data['a5'].to_numpy()) **
                 (self.tabata_data['a2'].to_numpy() + self.tabata_data['a6'].to_numpy()))
@@ -48,4 +54,4 @@ class CrossSection:
     def get_polynomial(self):
         energy = numpy.logspace(0.75, 5, 50)
         cross_section = self.calculate(energy)
-        return scipy.interpolate.interp1d(energy, cross_section, fill_value="extrapolate")
+        return scipy.interpolate.interp1d(energy, cross_section, fill_value='extrapolate')

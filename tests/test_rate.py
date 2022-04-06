@@ -1,7 +1,10 @@
+import numpy
 import scipy.constants
 import unittest
-from bebim.rate import *
-from bebim.integrator import RateIntegrator
+
+from sibeira.rate_profile import RateProfile
+from sibeira.integrator import RateIntegrator
+from sibeira.beam import Beam
 
 
 class TestRate(unittest.TestCase):
@@ -35,3 +38,21 @@ class TestRate(unittest.TestCase):
         normalisation_factor = rate.integrate(rate.integrand_normalisation)
         numpy.testing.assert_array_almost_equal(normalisation_factor, 2.0*scipy.constants.pi**2, decimal=4,
                                                 err_msg='3D normalisation factor')
+
+
+class TestRateProfileSpline(unittest.TestCase):
+
+    def test_spline_for_0(self):
+        r = RateProfile('Li', 40)
+        s = r.get_spline([10, 20, 50, 100], [1, 3, 5, 10])
+        numpy.testing.assert_array_almost_equal([0.0], s([0.]), decimal=15, err_msg='spline test for 0')
+
+    def test_spline_for_1p1(self):
+        r = RateProfile('Li', 40)
+        s = r.get_spline([10, 20, 50, 100], [1, 3, 5, 10])
+        numpy.testing.assert_array_almost_equal([3.135669805050988e-08], s([1.1]), decimal=15, err_msg='spline test for 1.1')
+
+    def test_spline_for_11(self):
+        r = RateProfile('Li', 40)
+        s = r.get_spline([10, 20, 50, 100], [1, 3, 5, 10])
+        numpy.testing.assert_array_almost_equal([1.2481484271391177], s([11.]), decimal=4, err_msg='spline test for 11')
