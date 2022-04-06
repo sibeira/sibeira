@@ -2,7 +2,7 @@ import unittest
 
 import numpy
 
-from rate_profile import RateProfile
+from sibeira.rate_profile import RateProfile
 
 
 class TestRateProfileSpline(unittest.TestCase):
