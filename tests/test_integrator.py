@@ -3,7 +3,7 @@ import unittest
 import numpy
 import scipy.constants
 
-from integrator import RateIntegrator
+from sibeira.integrator import RateIntegrator
 from sibeira.beam import Beam
 
 
