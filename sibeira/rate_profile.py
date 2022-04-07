@@ -82,26 +82,40 @@ class RateProfile(Rate):
         try:
             path = self.get_file_name(destination)
             beam_energy_as_string = self.get_beam_energy_as_string()
-            tabata_as_string = str(tabata_integration_dimension)
-            profile_database = numpy.load(path)
-            return profile_database[beam_energy_as_string][profile_name][tabata_as_string]
+            dimension_as_string = str(tabata_integration_dimension)
+            profile_database = numpy.load(path, allow_pickle=True).item()
+            return profile_database[beam_energy_as_string][profile_name][dimension_as_string]
         except FileNotFoundError:
             raise (FileNotFoundError('There is no profile for ' + self.species))
-        except ValueError:
-            raise (ValueError('The profile is not found: ' + profile_name +
-                              ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
-                                             if tabata_integration_dimension >= 0 else 'OFF)')))
+        except KeyError:
+            raise (KeyError('The profile is not found: ' + profile_name +
+                            ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
+                                           if tabata_integration_dimension >= 0 else 'OFF)')))
 
     def export_profile(self, profile_name, tabata_integration_dimension, profile, destination='data'):
         path = self.get_file_name(destination)
         try:
-            profile_database = numpy.load(path)
+            profile_database = numpy.load(path, allow_pickle=True)
         except FileNotFoundError:
             profile_database = {}
+        else:
+            raise
         beam_energy_as_string = self.get_beam_energy_as_string()
-        tabata_as_string = str(tabata_integration_dimension)
-        profile_database[beam_energy_as_string][profile_name][tabata_as_string] = profile
+        dimension_as_string = str(tabata_integration_dimension)
+        self.add_to_database(profile_database, profile, beam_energy_as_string, dimension_as_string, profile_name)
         numpy.save(path, profile_database)
+
+    @staticmethod
+    def add_to_database(profile_database, profile, beam_energy_as_string, dimension_as_string, profile_name):
+        try:
+            profile_database[beam_energy_as_string]
+        except KeyError:
+            profile_database[beam_energy_as_string] = {}
+        try:
+            profile_database[beam_energy_as_string][profile_name]
+        except KeyError:
+            profile_database[beam_energy_as_string][profile_name] = {}
+        profile_database[beam_energy_as_string][profile_name][dimension_as_string] = profile
 
     def get_beam_energy_as_string(self):
         return str(self.beam_energy / 1000.)
