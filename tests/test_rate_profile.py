@@ -1,5 +1,4 @@
 import unittest
-
 import numpy
 
 from sibeira.rate_profile import RateProfile

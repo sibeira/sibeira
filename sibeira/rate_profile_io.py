@@ -1,7 +1,7 @@
 import os
 import numpy
 
-from rate import Rate
+from sibeira.rate import Rate
 
 
 class RateProfileIO(Rate):
