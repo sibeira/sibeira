@@ -20,3 +20,6 @@ class TestRate(unittest.TestCase):
         return Beam('D', 0).get_mass()
 
 
+if __name__ == '__main__':
+    unittest.main()
+
