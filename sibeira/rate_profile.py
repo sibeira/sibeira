@@ -65,7 +65,7 @@ class RateProfile(Rate):
                         tabata_integration_dimension=-1):
         try:
             profile = self.import_profile(profile_name, tabata_integration_dimension)
-        except ValueError:
+        except (FileNotFoundError, KeyError):
             if profile_name == 'beb':
                 profile = self.get_beb_profile(tabata_integration_dimension)
             elif profile_name == 'nrl':
