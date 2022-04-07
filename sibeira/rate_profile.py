@@ -79,10 +79,18 @@ class RateProfile(Rate):
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
 
     def import_profile(self, profile_name, tabata_integration_dimension, destination='data'):
-        raise (ValueError('The profile is not found: ' + profile_name +
-                          ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
-                                         if tabata_integration_dimension >= 0 else 'OFF)')))
-        return profile
+        try:
+            path = self.get_file_name(destination)
+            beam_energy_as_string = self.get_beam_energy_as_string()
+            tabata_as_string = str(tabata_integration_dimension)
+            profile_database = numpy.load(path)
+            return profile_database[beam_energy_as_string][profile_name][tabata_as_string]
+        except FileNotFoundError:
+            raise (FileNotFoundError('There is no profile for ' + self.species))
+        except ValueError:
+            raise (ValueError('The profile is not found: ' + profile_name +
+                              ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
+                                             if tabata_integration_dimension >= 0 else 'OFF)')))
 
     def export_profile(self, profile_name, tabata_integration_dimension, profile, destination='data'):
         path = self.get_file_name(destination)

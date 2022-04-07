@@ -27,15 +27,9 @@ class TestRateProfileSpline(unittest.TestCase):
 class TestRateProfileIO(unittest.TestCase):
     def test_import_profile_not_exist(self):
         r = RateProfile('Li', 40)
-        with self.assertRaises(ValueError) as i:
+        with self.assertRaises(OSError) as i:
             r.import_profile('invalid profile', 0)
-        self.assertEqual('The profile is not found: invalid profile (Tabata 0D)', str(i.exception))
-
-    def test_import_profile_not_exist_tabata_off(self):
-        r = RateProfile('Li', 40)
-        with self.assertRaises(ValueError) as i:
-            r.import_profile('invalid profile', -1)
-        self.assertEqual('The profile is not found: invalid profile (Tabata OFF)', str(i.exception))
+        self.assertEqual('There is no profile for Li', str(i.exception))
 
     def test_export_and_import(self):
         reference_profile = 'test_data'
@@ -60,7 +54,7 @@ class TestRateProfileIO(unittest.TestCase):
         with self.assertRaises(ValueError) as i:
             r.import_profile(profile_name, -1, directory)
 
-        self.assertEqual('The profile is not found in the database.', str(i.exception),
+        self.assertEqual('The profile is not found: test (Tabata OFF)', str(i.exception),
                          msg='Profile I/O database error for invalid Tabata')
 
     def test_export_and_import_fail_profile(self):
@@ -73,7 +67,7 @@ class TestRateProfileIO(unittest.TestCase):
         with self.assertRaises(ValueError) as i:
             r.import_profile('test', 1, directory)
 
-        self.assertEqual('The profile is not found in the database.', str(i.exception),
+        self.assertEqual('The profile is not found: test (Tabata 1D)', str(i.exception),
                          msg='Profile I/O database error for invalid Tabata')
 
     def test_export_and_import_database(self):
@@ -95,7 +89,7 @@ class TestRateProfileIO(unittest.TestCase):
         self.assertEqual(reference_profile3, result_profile3, msg='Profile I/O database does not work. Case3')
 
     def test_get_beam_energy_as_string_int(self):
-        reference = '40'
+        reference = '40.0'
         r = RateProfile('Li', 40000)
         result = r.get_beam_energy_as_string()
         self.assertEqual(reference, result)
