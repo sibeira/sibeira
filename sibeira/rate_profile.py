@@ -2,11 +2,10 @@ import numpy
 import scipy.interpolate
 import scipy.integrate
 
-from sibeira.rate import Rate
 from sibeira.rate_profile_io import RateProfileIO
 
 
-class RateProfile(Rate, RateProfileIO):
+class RateProfile(RateProfileIO):
     def __init__(self, species, beam_energy, ionisation_level=0):
         super().__init__(species, beam_energy, ionisation_level)
         self.reference_energies = [10., 20., 50., 100., 200., 500., 1000.]
