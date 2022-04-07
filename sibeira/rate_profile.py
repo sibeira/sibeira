@@ -95,7 +95,7 @@ class RateProfile(Rate):
     def export_profile(self, profile_name, tabata_integration_dimension, profile, destination='data'):
         path = self.get_file_name(destination)
         try:
-            profile_database = numpy.load(path, allow_pickle=True)
+            profile_database = numpy.load(path, allow_pickle=True).item()
         except FileNotFoundError:
             profile_database = {}
         else:
