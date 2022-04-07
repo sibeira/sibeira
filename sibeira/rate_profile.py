@@ -78,11 +78,11 @@ class RateProfile(Rate):
         rate = profile(temperatures) * densities / self.speed
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
 
-    def import_profile(self, profile_name, tabata_integration_dimension):
+    def import_profile(self, profile_name, tabata_integration_dimension, destination='data'):
         raise (ValueError('The profile is not found: ' + profile_name +
                           ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
                                          if tabata_integration_dimension >= 0 else 'OFF)')))
         return profile
 
-    def export_profile(self, profile_name, tabata_integration_dimension, profile):
+    def export_profile(self, profile_name, tabata_integration_dimension, profile, destination='data'):
         pass

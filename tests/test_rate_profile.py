@@ -42,9 +42,10 @@ class TestRateProfileIO(unittest.TestCase):
         profile_name = 'test'
         tabata_integration_dimension = -1
 
+        directory = tempfile.mkdtemp()
         r = RateProfile('Li', 40)
-        r.export_profile(profile_name, tabata_integration_dimension, reference_profile)
-        result_profile = r.import_profile(profile_name, tabata_integration_dimension)
+        r.export_profile(profile_name, tabata_integration_dimension, reference_profile, directory)
+        result_profile = r.import_profile(profile_name, tabata_integration_dimension, directory)
 
         self.assertEqual(reference_profile, result_profile, msg='Profile I/O does not work.')
 
@@ -52,11 +53,12 @@ class TestRateProfileIO(unittest.TestCase):
         reference_profile = 'test_data'
         profile_name = 'test'
 
+        directory = tempfile.mkdtemp()
         r = RateProfile('Li', 40)
-        r.export_profile(profile_name, 1, reference_profile)
+        r.export_profile(profile_name, 1, reference_profile, directory)
 
         with self.assertRaises(ValueError) as i:
-            r.import_profile(profile_name, -1)
+            r.import_profile(profile_name, -1, directory)
 
         self.assertEqual('The profile is not found in the database.', str(i.exception),
                          msg='Profile I/O database error for invalid Tabata')
@@ -64,11 +66,12 @@ class TestRateProfileIO(unittest.TestCase):
     def test_export_and_import_fail_profile(self):
         reference_profile = 'test_data'
 
+        directory = tempfile.mkdtemp()
         r = RateProfile('Li', 40)
-        r.export_profile('another_test', 1, reference_profile)
+        r.export_profile('another_test', 1, reference_profile, directory)
 
         with self.assertRaises(ValueError) as i:
-            r.import_profile('test', 1)
+            r.import_profile('test', 1, directory)
 
         self.assertEqual('The profile is not found in the database.', str(i.exception),
                          msg='Profile I/O database error for invalid Tabata')
@@ -78,13 +81,14 @@ class TestRateProfileIO(unittest.TestCase):
         reference_profile2 = 'test_data2'
         reference_profile3 = 'test_data3'
 
+        directory = tempfile.mkdtemp()
         r = RateProfile('Li', 40)
-        r.export_profile('test', 1, reference_profile1)
-        r.export_profile('test', -1, reference_profile2)
-        r.export_profile('another', 0, reference_profile3)
-        result_profile1 = r.import_profile('test', 1)
-        result_profile2 = r.import_profile('test', -1)
-        result_profile3 = r.import_profile('another', 0)
+        r.export_profile('test', 1, reference_profile1, directory)
+        r.export_profile('test', -1, reference_profile2, directory)
+        r.export_profile('another', 0, reference_profile3, directory)
+        result_profile1 = r.import_profile('test', 1, directory)
+        result_profile2 = r.import_profile('test', -1, directory)
+        result_profile3 = r.import_profile('another', 0, directory)
 
         self.assertEqual(reference_profile1, result_profile1, msg='Profile I/O database does not work. Case1')
         self.assertEqual(reference_profile2, result_profile2, msg='Profile I/O database does not work. Case2')
