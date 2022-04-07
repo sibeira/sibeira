@@ -1,6 +1,7 @@
 import unittest
 
 import numpy
+import tempfile
 
 from sibeira.rate_profile import RateProfile
 
@@ -26,7 +27,15 @@ class TestRateProfileSpline(unittest.TestCase):
 class TestRateProfileIO(unittest.TestCase):
     def test_import_profile_not_exist(self):
         r = RateProfile('Li', 40)
-        self.assertRaises(ValueError, r.import_profile, 'invalid profile', 0)
+        with self.assertRaises(ValueError) as i:
+            r.import_profile('invalid profile', 0)
+        self.assertEqual('The profile is not found: invalid profile (Tabata 0D)', str(i.exception))
+
+    def test_import_profile_not_exist_tabata_off(self):
+        r = RateProfile('Li', 40)
+        with self.assertRaises(ValueError) as i:
+            r.import_profile('invalid profile', -1)
+        self.assertEqual('The profile is not found: invalid profile (Tabata OFF)', str(i.exception))
 
 
 if __name__ == '__main__':

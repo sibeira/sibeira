@@ -25,7 +25,7 @@ class RateProfile(Rate):
     def set_nrl_profile(self, tabata_integration_dimension=-1):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
-            print('NRL  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
+            print('NRL  ' + str(int(i / len(reference_rates) * 100)) + '%', end='\r')
             self.set_profiles(self.reference_energies[i])
             reference_rates[i] = self.get_full_rate_with_nrl(tabata_integration_dimension)
         print('NRL 100%')
@@ -38,7 +38,7 @@ class RateProfile(Rate):
     def set_beb_profile(self, tabata_integration_dimension=-1):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
-            print('BEB  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
+            print('BEB  ' + str(int(i / len(reference_rates) * 100)) + '%', end='\r')
             self.set_profiles(self.reference_energies[i])
             reference_rates[i] = self.get_full_rate_with_beb(tabata_integration_dimension)
         print('BEB 100%')
@@ -51,7 +51,7 @@ class RateProfile(Rate):
     def set_tabata_profile(self, tabata_integration_dimension=2):
         reference_rates = numpy.zeros_like(self.reference_energies, dtype=float)
         for i in range(len(reference_rates)):
-            print('Tabata  ' + str(int(i/len(reference_rates) * 100)) + '%', end='\r')
+            print('Tabata  ' + str(int(i / len(reference_rates) * 100)) + '%', end='\r')
             self.set_profiles(self.reference_energies[i])
             reference_rates[i] = self.get_full_rate_with_tabata(tabata_integration_dimension)
         print('Tabata 100%')
@@ -73,14 +73,15 @@ class RateProfile(Rate):
             elif profile_name == 'tabata':
                 profile = self.get_tabata_profile(tabata_integration_dimension)
             else:
-                raise(ValueError('Invalid profile: ' + profile_name))
+                raise (ValueError('Invalid profile: ' + profile_name))
             self.export_profile(profile_name, tabata_integration_dimension, profile)
         rate = profile(temperatures) * densities / self.speed
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
 
     def import_profile(self, profile_name, tabata_integration_dimension):
-        raise(ValueError('The profile is not found: ' + profile_name +
-                         ' (T ' + str(tabata_integration_dimension) + ')'))
+        raise (ValueError('The profile is not found: ' + profile_name +
+                          ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
+                                         if tabata_integration_dimension >= 0 else 'OFF)')))
         return profile
 
     def export_profile(self, profile_name, tabata_integration_dimension, profile):
