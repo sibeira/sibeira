@@ -85,7 +85,9 @@ class RateProfile(Rate, RateProfileIO):
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
 
 
-class RateProfileIO:
+class RateProfileIO(Rate):
+    default_destination_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+
     def import_profile(self, profile_name, tabata_integration_dimension, destination_directory='data'):
         try:
             path = self.get_file_name(destination_directory)
@@ -112,7 +114,8 @@ class RateProfileIO:
             profile_database[beam_energy_as_string][profile_name] = {}
         profile_database[beam_energy_as_string][profile_name][dimension_as_string] = profile
 
-    def export_profile(self, profile_name, tabata_integration_dimension, profile, destination_directory='data'):
+    def export_profile(self, profile_name, tabata_integration_dimension, profile,
+                       destination_directory=default_destination_directory):
         path = self.get_file_name(destination_directory)
         try:
             profile_database = numpy.load(path, allow_pickle=True).item()
