@@ -56,7 +56,7 @@ class TestRateProfileIO(unittest.TestCase):
         r.export_profile(profile_name, 1, reference_profile)
 
         with self.assertRaises(ValueError) as i:
-            result_profile = r.import_profile(profile_name, -1)
+            r.import_profile(profile_name, -1)
 
         self.assertEqual('The profile is not found in the database.', str(i.exception),
                          msg='Profile I/O database error for invalid Tabata')
@@ -68,7 +68,7 @@ class TestRateProfileIO(unittest.TestCase):
         r.export_profile('another_test', 1, reference_profile)
 
         with self.assertRaises(ValueError) as i:
-            result_profile = r.import_profile('test', 1)
+            r.import_profile('test', 1)
 
         self.assertEqual('The profile is not found in the database.', str(i.exception),
                          msg='Profile I/O database error for invalid Tabata')
