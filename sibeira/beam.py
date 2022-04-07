@@ -6,7 +6,7 @@ import scipy.stats
 
 class Beam:
     def __init__(self, species, beam_energy, ionisation_level=0):
-        self.beam_energy = beam_energy
+        self.beam_energy = beam_energy  # in eV
         self.species = species
         self.mass = self.get_mass()
         self.speed = self.get_speed()
