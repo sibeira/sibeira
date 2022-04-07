@@ -94,7 +94,10 @@ class RateProfile(Rate):
 
     def export_profile(self, profile_name, tabata_integration_dimension, profile, destination='data'):
         path = self.get_file_name(destination)
-        profile_database = numpy.load(path)
+        try:
+            profile_database = numpy.load(path)
+        except FileNotFoundError:
+            profile_database = None
         beam_energy_as_string = self.get_beam_energy_as_string()
         tabata_as_string = str(tabata_integration_dimension)
         setattr(profile_database, beam_energy_as_string, None)
