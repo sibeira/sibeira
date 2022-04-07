@@ -27,7 +27,7 @@ class TestRateProfileSpline(unittest.TestCase):
 class TestRateProfileIO(unittest.TestCase):
     def test_import_profile_not_exist(self):
         r = RateProfile('Li', 40)
-        with self.assertRaises(OSError) as i:
+        with self.assertRaises(FileNotFoundError) as i:
             r.import_profile('invalid profile', 0)
         self.assertEqual('There is no profile for Li', str(i.exception))
 
@@ -51,10 +51,10 @@ class TestRateProfileIO(unittest.TestCase):
         r = RateProfile('Li', 40)
         r.export_profile(profile_name, 1, reference_profile, directory)
 
-        with self.assertRaises(ValueError) as i:
+        with self.assertRaises(KeyError) as i:
             r.import_profile(profile_name, -1, directory)
 
-        self.assertEqual('The profile is not found: test (Tabata OFF)', str(i.exception),
+        self.assertEqual('The profile is not found: test (Tabata OFF)', i.exception.args[0],
                          msg='Profile I/O database error for invalid Tabata')
 
     def test_export_and_import_fail_profile(self):
@@ -64,10 +64,10 @@ class TestRateProfileIO(unittest.TestCase):
         r = RateProfile('Li', 40)
         r.export_profile('another_test', 1, reference_profile, directory)
 
-        with self.assertRaises(ValueError) as i:
+        with self.assertRaises(KeyError) as i:
             r.import_profile('test', 1, directory)
 
-        self.assertEqual('The profile is not found: test (Tabata 1D)', str(i.exception),
+        self.assertEqual('The profile is not found: test (Tabata 1D)', i.exception.args[0],
                          msg='Profile I/O database error for invalid Tabata')
 
     def test_export_and_import_database(self):
