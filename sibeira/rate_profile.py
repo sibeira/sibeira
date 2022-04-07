@@ -15,10 +15,15 @@ class RateProfile(Rate):
         self.tabata_spline = None
 
     @staticmethod
+    def resolve_log_spline(f, x):
+        if numpy.isscalar(x):
+            return 0 if x == 0 else numpy.exp(f(numpy.log(x)))
+        return [0. if i == 0 else numpy.exp(f(numpy.log(i))) for i in x]
+
+    @staticmethod
     def get_spline(energy, cross_section):
-        f = scipy.interpolate.interp1d(numpy.log(energy), numpy.log(cross_section),
-                                       kind='cubic', fill_value='extrapolate')
-        return lambda x: [0. if i == 0 else numpy.exp(f(numpy.log(i))) for i in x]
+        return scipy.interpolate.interp1d(numpy.log(energy), numpy.log(cross_section),
+                                          kind='cubic', fill_value='extrapolate')
 
     def set_reference_energies(self, reference_energies):
         self.reference_energies = reference_energies
@@ -66,7 +71,7 @@ class RateProfile(Rate):
                         tabata_integration_dimension=-1):
         try:
             profile = self.import_profile(profile_name, tabata_integration_dimension)
-        except (FileNotFoundError, KeyError):
+        except (FileNotFoundError, EOFError, KeyError):
             if profile_name == 'beb':
                 profile = self.get_beb_profile(tabata_integration_dimension)
             elif profile_name == 'nrl':
@@ -76,7 +81,7 @@ class RateProfile(Rate):
             else:
                 raise (ValueError('Invalid profile: ' + profile_name))
             self.export_profile(profile_name, tabata_integration_dimension, profile)
-        rate = profile(temperatures) * densities / self.speed
+        rate = self.resolve_log_spline(profile, temperatures) * densities / self.speed
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
 
     def import_profile(self, profile_name, tabata_integration_dimension, destination_directory='data'):
@@ -97,12 +102,12 @@ class RateProfile(Rate):
         path = self.get_file_name(destination_directory)
         try:
             profile_database = numpy.load(path, allow_pickle=True).item()
-        except FileNotFoundError:
+        except (FileNotFoundError, EOFError):
             profile_database = {}
         beam_energy_as_string = self.get_beam_energy_as_string()
         dimension_as_string = str(tabata_integration_dimension)
         self.add_to_database(profile_database, profile, beam_energy_as_string, dimension_as_string, profile_name)
-        if not(os.path.exists(destination_directory)):
+        if not (os.path.exists(destination_directory)):
             os.mkdir(destination_directory)
         numpy.save(path, profile_database)
 
@@ -123,4 +128,3 @@ class RateProfile(Rate):
 
     def get_file_name(self, destination):
         return destination + '/' + self.species + '.npy'
-
