@@ -48,6 +48,48 @@ class TestRateProfileIO(unittest.TestCase):
 
         self.assertEqual(reference_profile, result_profile, msg='Profile I/O does not work.')
 
+    def test_export_and_import_fail_tabata(self):
+        reference_profile = 'test_data'
+        profile_name = 'test'
+
+        r = RateProfile('Li', 40)
+        r.export_profile(profile_name, 1, reference_profile)
+
+        with self.assertRaises(ValueError) as i:
+            result_profile = r.import_profile(profile_name, -1)
+
+        self.assertEqual('The profile is not found in the database.', str(i.exception),
+                         msg='Profile I/O database error for invalid Tabata')
+
+    def test_export_and_import_fail_profile(self):
+        reference_profile = 'test_data'
+
+        r = RateProfile('Li', 40)
+        r.export_profile('another_test', 1, reference_profile)
+
+        with self.assertRaises(ValueError) as i:
+            result_profile = r.import_profile('test', 1)
+
+        self.assertEqual('The profile is not found in the database.', str(i.exception),
+                         msg='Profile I/O database error for invalid Tabata')
+
+    def test_export_and_import_database(self):
+        reference_profile1 = 'test_data1'
+        reference_profile2 = 'test_data2'
+        reference_profile3 = 'test_data3'
+
+        r = RateProfile('Li', 40)
+        r.export_profile('test', 1, reference_profile1)
+        r.export_profile('test', -1, reference_profile2)
+        r.export_profile('another', 0, reference_profile3)
+        result_profile1 = r.import_profile('test', 1)
+        result_profile2 = r.import_profile('test', -1)
+        result_profile3 = r.import_profile('another', 0)
+
+        self.assertEqual(reference_profile1, result_profile1, msg='Profile I/O database does not work. Case1')
+        self.assertEqual(reference_profile2, result_profile2, msg='Profile I/O database does not work. Case2')
+        self.assertEqual(reference_profile3, result_profile3, msg='Profile I/O database does not work. Case3')
+
 
 if __name__ == '__main__':
     unittest.main()
