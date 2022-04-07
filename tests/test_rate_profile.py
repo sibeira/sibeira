@@ -94,6 +94,24 @@ class TestRateProfileIO(unittest.TestCase):
         self.assertEqual(reference_profile2, result_profile2, msg='Profile I/O database does not work. Case2')
         self.assertEqual(reference_profile3, result_profile3, msg='Profile I/O database does not work. Case3')
 
+    def test_get_beam_energy_as_string_int(self):
+        reference = '40'
+        r = RateProfile('Li', 40000)
+        result = r.get_beam_energy_as_string()
+        self.assertEqual(reference, result)
+
+    def test_get_beam_energy_as_string_double(self):
+        reference = '66.666'
+        r = RateProfile('Li', 66666)
+        result = r.get_beam_energy_as_string()
+        self.assertEqual(reference, result)
+
+    def test_get_file_name(self):
+        reference = 'data/Li.npy'
+        r = RateProfile('Li', 40)
+        result = r.get_file_name('data')
+        self.assertEqual(reference, result, msg='Test file name')
+
 
 if __name__ == '__main__':
     unittest.main()
