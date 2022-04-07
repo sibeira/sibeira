@@ -37,6 +37,17 @@ class TestRateProfileIO(unittest.TestCase):
             r.import_profile('invalid profile', -1)
         self.assertEqual('The profile is not found: invalid profile (Tabata OFF)', str(i.exception))
 
+    def test_export_and_import(self):
+        reference_profile = 'test_data'
+        profile_name = 'test'
+        tabata_integration_dimension = -1
+
+        r = RateProfile('Li', 40)
+        r.export_profile(profile_name, tabata_integration_dimension, reference_profile)
+        result_profile = r.import_profile(profile_name, tabata_integration_dimension)
+
+        self.assertEqual(reference_profile, result_profile, msg='Profile I/O does not work.')
+
 
 if __name__ == '__main__':
     unittest.main()
