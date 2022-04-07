@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 
-from rate_profile import RateProfile
+from sibeira.rate_profile import RateProfile
 
 
 class TestRateProfileIO(unittest.TestCase):
