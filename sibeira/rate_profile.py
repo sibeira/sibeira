@@ -98,8 +98,6 @@ class RateProfile(Rate):
             profile_database = numpy.load(path, allow_pickle=True).item()
         except FileNotFoundError:
             profile_database = {}
-        else:
-            raise
         beam_energy_as_string = self.get_beam_energy_as_string()
         dimension_as_string = str(tabata_integration_dimension)
         self.add_to_database(profile_database, profile, beam_energy_as_string, dimension_as_string, profile_name)
