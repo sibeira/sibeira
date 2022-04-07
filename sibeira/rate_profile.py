@@ -6,7 +6,7 @@ import scipy.integrate
 from sibeira.rate import Rate
 
 
-class RateProfile(Rate):
+class RateProfile(Rate, RateProfileIO):
     def __init__(self, species, beam_energy, ionisation_level=0):
         super().__init__(species, beam_energy, ionisation_level)
         self.reference_energies = [10., 20., 50., 100., 200., 500., 1000.]
@@ -84,6 +84,8 @@ class RateProfile(Rate):
         rate = self.resolve_log_spline(profile, temperatures) * densities / self.speed
         return numpy.exp(scipy.integrate.cumulative_trapezoid(rate, radial_coordinates, initial=0))
 
+
+class RateProfileIO:
     def import_profile(self, profile_name, tabata_integration_dimension, destination_directory='data'):
         try:
             path = self.get_file_name(destination_directory)
@@ -98,6 +100,18 @@ class RateProfile(Rate):
                             ' (Tabata ' + (str(tabata_integration_dimension) + 'D)'
                                            if tabata_integration_dimension >= 0 else 'OFF)')))
 
+    @staticmethod
+    def add_to_database(profile_database, profile, beam_energy_as_string, dimension_as_string, profile_name):
+        try:
+            profile_database[beam_energy_as_string]
+        except KeyError:
+            profile_database[beam_energy_as_string] = {}
+        try:
+            profile_database[beam_energy_as_string][profile_name]
+        except KeyError:
+            profile_database[beam_energy_as_string][profile_name] = {}
+        profile_database[beam_energy_as_string][profile_name][dimension_as_string] = profile
+
     def export_profile(self, profile_name, tabata_integration_dimension, profile, destination_directory='data'):
         path = self.get_file_name(destination_directory)
         try:
@@ -110,18 +124,6 @@ class RateProfile(Rate):
         if not (os.path.exists(destination_directory)):
             os.mkdir(destination_directory)
         numpy.save(path, profile_database)
-
-    @staticmethod
-    def add_to_database(profile_database, profile, beam_energy_as_string, dimension_as_string, profile_name):
-        try:
-            profile_database[beam_energy_as_string]
-        except KeyError:
-            profile_database[beam_energy_as_string] = {}
-        try:
-            profile_database[beam_energy_as_string][profile_name]
-        except KeyError:
-            profile_database[beam_energy_as_string][profile_name] = {}
-        profile_database[beam_energy_as_string][profile_name][dimension_as_string] = profile
 
     def get_beam_energy_as_string(self):
         return str(self.beam_energy / 1000.)
