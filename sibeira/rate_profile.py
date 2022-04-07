@@ -97,12 +97,10 @@ class RateProfile(Rate):
         try:
             profile_database = numpy.load(path)
         except FileNotFoundError:
-            profile_database = None
+            profile_database = {}
         beam_energy_as_string = self.get_beam_energy_as_string()
         tabata_as_string = str(tabata_integration_dimension)
-        setattr(profile_database, beam_energy_as_string, None)
-        setattr(profile_database[beam_energy_as_string], profile_name, None)
-        setattr(profile_database[beam_energy_as_string][profile_name], tabata_as_string, profile)
+        profile_database[beam_energy_as_string][profile_name][tabata_as_string] = profile
         numpy.save(path, profile_database)
 
     def get_beam_energy_as_string(self):
