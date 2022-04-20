@@ -30,7 +30,7 @@ jobs:
           python -m unittest -v tests.test_tabata
       - name: Run unit tests for rates and integrators
         run: |
-          if test $(git diff --name-only $GITHUB_BASE_REF -- sibeira/integrator.py | wc -l) -ne 0  ; then
+          if test $(git diff --name-only origin/$GITHUB_BASE_REF -- sibeira/integrator.py | wc -l) -ne 0  ; then
             python -m unittest -v tests.test_integrator_3d
           else
             python -m unittest -v tests.test_integrator
