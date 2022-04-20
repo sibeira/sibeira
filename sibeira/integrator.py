@@ -4,8 +4,8 @@ import scipy.integrate
 import scipy.stats
 
 from sibeira.beam import Beam
-from bebim.cross_section import CrossSection
-from tabata_ctf.cross_section import CrossSection as CXCrossSection
+from bebim.cross_section import CrossSection as BEBCrossSection
+from tabata_ctf.cross_section import CrossSection as TabataCrossSection
 
 
 class RateIntegrator:
@@ -51,12 +51,12 @@ class RateIntegrator:
 
     def get_cross_section(self):
         if self.reaction_name == 'electron impact ionisation':
-            beb = CrossSection(self.beam_species)
+            beb = BEBCrossSection(self.beam_species)
             return beb.get_polynomial()
         elif self.reaction_name == 'charge exchange':
-            tabata = CXCrossSection(self.beam_species)
+            tabata = TabataCrossSection(self.beam_species)
             return tabata.get_polynomial()
-            #tabata_double = CXCrossSection(self.beam_species, degree='double')
+            #tabata_double = TabataCrossSection(self.beam_species, degree='double')
             #return lambda x: tabata.get_polynomial()(x) + 2.0 * tabata_double.get_polynomial()(x)
         else:
             raise ValueError('The ionisation reaction is unknown: ' + self.reaction_name)
