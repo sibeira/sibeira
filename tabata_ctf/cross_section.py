@@ -35,7 +35,7 @@ class CrossSection:
 
     @staticmethod
     def replace_nan_to_zero(a):
-        nan_indices = numpy.isnan(a.astype(numpy.float))
+        nan_indices = numpy.isnan(a.astype(float))
         a[nan_indices] = 0.0
         return a
 
