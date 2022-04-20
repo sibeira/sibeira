@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Install Python 3
         uses: actions/setup-python@v2
@@ -22,14 +25,22 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Run unit tests
+      - name: Run unit tests for utils
         run: |
           python -m unittest -v tests.test_beam
           python -m unittest -v tests.test_species
           python -m unittest -v tests.test_cross_section
           python -m unittest -v tests.test_tabata
-          python -m unittest -v tests.test_integrator
+      - name: Run unit tests for rates and integrators
+        run: |
+          if test $(git diff --name-only ${{ github.event.pull_request.base.sha }} -- sibeira/integrator.py | wc -l) -ne 0  ; then
+            python -m unittest -v tests.test_integrator_3d
+          else
+            python -m unittest -v tests.test_integrator
+          fi
           python -m unittest -v tests.test_rate
           python -m unittest -v tests.test_rate_profile
           python -m unittest -v tests.test_rate_profile_io
+      - name: Run unit tests for examples
+        run: |
           python -m unittest -v example.test_renate_od
