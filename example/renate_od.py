@@ -81,7 +81,7 @@ def get_renate_od_attenuation_profile(beamlet_geometry, shot_number, time, speci
     return radial_coordinates, relative_attenuation_rod.fillna(0)
 
 
-def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
+def run_attenuation_comparison(shot_number, time, species, energy, dimension=3):
     from sibeira.rate_profile import RateProfile
 
     sys.path.append(os.environ['RENATE_OD'])
@@ -109,9 +109,9 @@ def run_attenuation_comparison(shot_number, time, species, energy, dimension=2):
 
     relative_attenuation_from_beb = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb')
     relative_attenuation_from_nrl = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl')
-    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', 2)
-    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', 2)
-    relative_attenuation_from_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'tabata', 2)
+    relative_attenuation_from_beb_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'beb', dimension)
+    relative_attenuation_from_nrl_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'nrl', dimension)
+    relative_attenuation_from_tabata = rate.get_attenuation(beamlet_geometry.rad, temperatures, densities, 'tabata', dimension)
 
     plot_attenuation_profile(shot_number, time, species, energy, dimension, radial_coordinates,
                              [relative_attenuation_rod,
