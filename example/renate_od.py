@@ -4,12 +4,12 @@ import matplotlib.pyplot
 import numpy
 
 
-def get_export_name(mode, shot_number, time, species, energy, dimension=2, scenario='total'):
+def get_export_name(mode, shot_number, time, species, energy, dimension=3, scenario='total'):
     directory_path = os.path.dirname(os.path.abspath(__file__))
     return directory_path + '/figures/' + species + '_' + str(energy) + 'keV_' + str(shot_number) + '_' + str(time) + \
            get_scenario_path(scenario) + \
            ('' if mode == 'plot' else '_' + mode) + \
-           ('_3d' if dimension == 3 else '')
+           ('' if dimension == 3 else '_' + str(dimension) + 'd')
 
 
 def get_title_name(shot_number, time, species, energy, scenario='total'):

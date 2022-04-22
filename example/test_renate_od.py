@@ -19,13 +19,18 @@ class TestRenateODExportName(unittest.TestCase):
         reference = self.directory_path + 'test_123keV_12345_678_lorem_ipsum'
         self.assertEqual(reference, get_export_name('lorem_ipsum', 12345, 678, 'test', 123), 'Test other plot path')
 
+    def test_2d_integration_plot(self):
+        reference = self.directory_path + 'test_123keV_12345_678_dolor_sit_amet_2d'
+        self.assertEqual(reference, get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 2),
+                         'Test 2D integration plot path')
+
     def test_3d_integration_plot(self):
-        reference = self.directory_path + 'test_123keV_12345_678_dolor_sit_amet_3d'
+        reference = self.directory_path + 'test_123keV_12345_678_dolor_sit_amet'
         self.assertEqual(reference, get_export_name('dolor_sit_amet', 12345, 678, 'test', 123, 3),
                          'Test 3D integration plot path')
 
     def test_3d_integration_plot_with_pure_electron_case(self):
-        reference = self.directory_path + 'test_123keV_12345_678_electron_log_3d'
+        reference = self.directory_path + 'test_123keV_12345_678_electron_log'
         self.assertEqual(reference, get_export_name('log', 12345, 678, 'test', 123, 3, 'just electron'),
                          'Test pure electron case path with 3D integration with logarithmic plot')
 
