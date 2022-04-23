@@ -5,3 +5,6 @@ __pycache__/
 
 # IDE
 .idea
+
+# data files
+sibeira/data
